@@ -1,3 +1,3 @@
 [submodule "WebpagePrinterHelper"]
 	path = WebpagePrinterHelper
-	url = ./WebpagePrinterHelper
+	url = https://github.com/zerlei/WebpagePrinterHelper.git
