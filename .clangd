@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: [-I/nix/store/w41bq7wcswn7wb6vddkj8i2g1c64rciv-qtbase-6.8.2/include]
