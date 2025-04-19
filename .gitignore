@@ -2,6 +2,8 @@
 build
 .cache
 .vscode
+log.txt
 
 
 /test/node_modules
+
