@@ -1,0 +1,5 @@
+include("${CMAKE_SOURCE_DIR}/cmake/QtCommon.cmake")
+qt_add_executable(TEST_LOG)
+target_sources(TEST_LOG PRIVATE TEST_log.cpp ../src/log.h)
+target_link_libraries(TEST_LOG PRIVATE Qt6::Test)
+add_test(NAME TEST_LOG COMMAND TEST_LOG)

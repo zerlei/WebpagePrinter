@@ -1,7 +1,6 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include <QCoreApplication>
 #include <QDateTime>
 #include <QFile>
 #include <QLoggingCategory>
@@ -9,9 +8,7 @@
 #include <QMutex>
 #include <QTextStream>
 // ------------------- 日志分类声明 -------------------
-Q_DECLARE_LOGGING_CATEGORY(AppLog)
-Q_DECLARE_LOGGING_CATEGORY(NetLog)
-Q_DECLARE_LOGGING_CATEGORY(UiLog)
+Q_DECLARE_LOGGING_CATEGORY(TESTLOG)
 
 // ------------------- 初始化 & 自定义输出 -------------------
 class LogManager {
@@ -101,9 +98,6 @@ private:
                .arg(contextStr)
                .arg(msg);
     out.flush();
-
-    if (type == QtFatalMsg)
-      abort();
   }
 };
 
