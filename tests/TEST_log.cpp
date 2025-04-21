@@ -10,6 +10,9 @@ Q_LOGGING_CATEGORY(TESTLOG, "test.log")
 class TestLog : public QObject {
   Q_OBJECT
 private:
+  /**
+   * @brief rmove all log files for a clean test env
+   */
   void removeLogFile() {
 
     QDir dir("./");
@@ -40,6 +43,9 @@ private slots:
     LogManager::init("log.txt", 1024);
   }
   void cleanup() { removeLogFile(); }
+  /**
+   * @brief test log writer correct
+   */
   void testLog() {
     qCDebug(TESTLOG) << "DEBUG";
     qCInfo(TESTLOG) << "INFO";
@@ -64,6 +70,9 @@ private slots:
       QFAIL(QString("Line Numbers %1 error").arg(c).toStdString().c_str());
     }
   }
+  /*
+   * @brief partition logs into several log files
+   */
   void testLogMutiLogs() {
     for (int i = 0; i < 10; i++) {
       qCDebug(TESTLOG) << "DEBUG";

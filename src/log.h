@@ -1,3 +1,4 @@
+
 #ifndef LOG_H
 #define LOG_H
 
@@ -36,6 +37,9 @@ private:
     logFile.open(QIODevice::Append | QIODevice::Text);
   }
 
+  /**
+   * @brief partition logs into several log files
+   */
   static void rotateLogFileIfNeeded() {
     if (!logFile.isOpen())
       return;
@@ -55,6 +59,15 @@ private:
     openLogFile();
   }
 
+  /**
+   * @brief  Reprocessing message for add file name,line number etc.
+   * when in relase mode , add_definitions(-DQT_MESSAGELOGCONTEXT) for record
+   * extry source info
+   *
+   * @param type
+   * @param context
+   * @param msg
+   */
   static void messageHandler(QtMsgType type, const QMessageLogContext &context,
                              const QString &msg) {
     QMutexLocker locker(&mutex);
