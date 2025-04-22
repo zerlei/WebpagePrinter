@@ -6,4 +6,5 @@ project(
 add_subdirectory(docs)
 add_subdirectory(src)
 enable_testing()
+INCLUDE(CTest)
 add_subdirectory(tests)
