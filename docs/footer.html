@@ -1,0 +1,65 @@
+<!-- HTML footer for doxygen 1.10.0-->
+<!-- start footer part -->
+<!--BEGIN GENERATE_TREEVIEW-->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    $navpath
+    <li class="footer">$generatedby <a href="https://www.doxygen.org/index.html"><img class="footer"
+          src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen" /></a> $doxygenversion </li>
+  </ul>
+</div>
+<!--END GENERATE_TREEVIEW-->
+<!--BEGIN !GENERATE_TREEVIEW-->
+<hr class="footer" />
+<address class="footer"><small>
+    $generatedby&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="$relpath^doxygen.svg"
+        width="104" height="31" alt="doxygen" /></a> $doxygenversion
+  </small></address>
+<!--END !GENERATE_TREEVIEW-->
+</body>
+
+<script type="text/javascript">
+
+  window.addEventListener('load', async () => {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+    })
+    DoxygenAwesomeDarkModeToggle.init()
+    DoxygenAwesomeParagraphLink.init()
+    DoxygenAwesomeInteractiveToc.init()
+
+    await ResetMermaidContent()
+  });
+
+
+  async function ResetMermaidContent() {
+    var mermaidContent = document.getElementsByClassName('fragment')
+    for (var i = 0; i < mermaidContent.length; i++) {
+      let c = mermaidContent[i]
+      let isJudge = false
+      let mermaidStr = ""
+      let child = c.firstElementChild
+      if (!child.classList.contains("line")) {
+        child = child.nextElementSibling
+      }
+      if (!child.textContent.includes("%%mermaid")) {
+        break
+      }
+      while (child) {
+        mermaidStr += child.textContent
+        child = child.nextSibling
+      }
+
+      const { svg } = await mermaid.render('graphDiv', mermaidStr)
+      c.innerHTML = svg
+
+    }
+  }
+
+
+  // 示例用法
+
+</script>
+
+</html>
