@@ -12,6 +12,11 @@
 Q_DECLARE_LOGGING_CATEGORY(TESTLOG)
 
 // ------------------- 初始化 & 自定义输出 -------------------
+/**
+ * @class LogManager
+ * @brief
+ *
+ */
 class LogManager {
 public:
   static void init(const QString &filePath = "log.txt",
@@ -25,17 +30,32 @@ public:
   }
 
 private:
-  //! @mermaid
-  //! flowchart TD
-  //!     A[Christmas] -->|Get money| B(Go shopping)
-  //!     B --> C{Let me think}
-  //!     C -->|One| D[Laptop]
-  //!     C -->|Two| E[iPhone]
-  //!     C -->|Three| F[fa:fa-car Car]
-  //! @endmermaid
+  /**
+   * @brief LOGFILE
+   * ## h2
+  ```mermaid
+  %%mermaid
+  graph LR
+      subgraph 对外接口
+          direction LR
+          Http-Server
+          Websocket-Server
+          Websocket-Client
+      end
+         对外接口-->chrome内核-->打印机驱动
+  ```
+   */
   static inline QFile logFile;
 
-  
+  /*!
+  ## 13231
+  ```cpp
+  int main() {return 0;}
+  ```
+  @startuml
+  Alice -> Bob
+  @enduml
+  */
   static inline QMutex mutex;
   static inline QString logFilePath;
   static inline qint64 maxSize = 5 * 1024 * 1024;

@@ -290,8 +290,8 @@ TAB_SIZE               = 4
 # with the commands \{ and \} for these it is advised to use the version @{ and
 # @} or use a double escape (\\{ and \\})
 
-ALIASES     = mermaid="<pre class=\"mermaid\">"
-ALIASES     += endmermaid="</pre>"
+# ALIASES     = mermaid="<pre class=\"mermaid\">"
+# ALIASES     += endmermaid="</pre>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
 # only. Doxygen will then generate output that is more tailored for C. For
@@ -2884,7 +2884,7 @@ DIAFILE_DIRS           =
 # a preprocessing step. Doxygen will generate a warning when it encounters a
 # \startuml command in this case and will not generate output for the diagram.
 
-PLANTUML_JAR_PATH      =
+PLANTUML_JAR_PATH      = @PLANTUML_JAR_PATH@
 
 # When using PlantUML, the PLANTUML_CFG_FILE tag can be used to specify a
 # configuration file for PlantUML.

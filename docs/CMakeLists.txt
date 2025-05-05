@@ -5,6 +5,7 @@ if(DOXYGEN_PATH_NOTFOUND)
 documentation. Please install it on your system")
 else()
   message(STATUS "Doxygen found.")
+  set(PLANTUML_JAR_PATH $ENV{PLANTUML_JAR_PATH})
   cmake_policy(SET CMP0135 NEW)
   include(FetchContent)
   FetchContent_Declare(

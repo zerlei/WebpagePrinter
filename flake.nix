@@ -5,7 +5,14 @@
   inputs = { nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11"; };
 
   outputs = { self, nixpkgs }:
-    let pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      PLANTUML_JAR = pkgs.fetchurl {
+        url =
+          "https://github.com/plantuml/plantuml/releases/download/v1.2025.2/plantuml.jar";
+        sha256 =
+          "sha256-hix9bQ073jyBnqxN/APPVJBGvx1JwE0Yp3nrLYNLd8k="; # 修改为实际 hash
+      };
     in {
       packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
         pname = "WebpagePrinterHelper";
@@ -29,6 +36,9 @@
 
         inputsFrom = [ self.packages.x86_64-linux.default ];
         buildInputs = with pkgs; [
+          # for plantuml 500mb+500mb ！！！！ java...
+          openjdk
+
           graphviz
           doxygen
           gdb
@@ -46,7 +56,10 @@
           # set the environment variables that unpatched Qt apps expect
           bashdir=$(mktemp -d)
           makeWrapper "$(type -p bash)" "$bashdir/bash" "''${qtWrapperArgs[@]}"
-          exec "$bashdir/bash"
+          # exec "$bashdir/bash"
+
+          # export plantuml jar path
+          export PLANTUML_JAR_PATH=${PLANTUML_JAR}
         '';
       };
     };
