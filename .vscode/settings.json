@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "/home/zerlei/git/WebpagePrinter"
+    "cmake.sourceDirectory": "/home/zerlei/git/WebpagePrinter",
+    "cSpell.words": [
+        "stdenv"
+    ]
 }

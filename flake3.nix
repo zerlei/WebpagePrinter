@@ -2,7 +2,7 @@
   description =
     "Print a web page through an http request or a websocket connection, and skip the browser's print preview";
 
-  inputs = { nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05"; };
+  inputs = { nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11"; };
 
   outputs = { self, nixpkgs }:
     let
@@ -42,17 +42,8 @@
           graphviz
           doxygen
           gdb
-          # this is for the shellhook portion
-          qt6.wrapQtAppsHook
-          makeWrapper
-          bashInteractive
         ];
         shellHook = ''
-          # set the environment variables that unpatched Qt apps expect
-          bashdir=$(mktemp -d)
-          makeWrapper "$(type -p bash)" "$bashdir/bash" "''${qtWrapperArgs[@]}"
-          # exec "$bashdir/bash"
-
           # export plantuml jar path
           export PLANTUML_JAR_PATH=${PLANTUML_JAR}
           # 不知道为什么这个版本QT的compiler_command.json 导不出这个目录，手动加上吧！

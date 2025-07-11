@@ -1,0 +1,47 @@
+# 基本配置
+BasedOnStyle: LLVM  # 可选: LLVM, Google, Chromium, Mozilla, WebKit
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# 换行策略
+ColumnLimit: 100
+BreakBeforeBraces: Attach # 可选: Attach, Allman, Stroustrup, etc.
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortBlocksOnASingleLine: false
+
+# 空格和对齐
+SpaceBeforeParens: ControlStatements  # if, for, while 后加空格
+AlwaysBreakTemplateDeclarations: Yes
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignOperands: true
+AlignTrailingComments: true
+
+# 指针/引用样式
+PointerAlignment: Left    # 可选: Left, Right, Middle
+DerivePointerAlignment: false
+
+# 命名空间
+NamespaceIndentation: All  # 所有命名空间都缩进
+
+# 类与函数
+ConstructorInitializerIndentWidth: 4
+BreakConstructorInitializersBeforeComma: true
+
+# Include排序
+IncludeBlocks: Preserve
+SortIncludes: true
+IncludeCategories:
+  - Regex:           '^<.*\.h>'
+    Priority:        1
+    SortPriority:    0
+  - Regex:           '^"'
+    Priority:        2
+    SortPriority:    1
+
+# 自定义宏处理（如果你使用 Qt/Q_OBJECT 宏）
+MacroBlockBegin: '^Q_OBJECT$'
+MacroBlockEnd: '^Q_OBJECT$'
+

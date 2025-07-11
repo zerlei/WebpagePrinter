@@ -1,2 +1,13 @@
+# ===== 编译选项部分 =====
 CompileFlags:
-  Add: [-I/nix/store/w41bq7wcswn7wb6vddkj8i2g1c64rciv-qtbase-6.8.2/include]
+  Add:
+    # 使用 C++20 标准
+    - -std=c++20
+    # 开启常见和激进的编译器警告
+    - -Wall                 # 开启所有基础警告
+    - -Wextra               # 更多额外警告（比如未使用的参数）
+    - -Wpedantic            # 严格遵循标准，报告非标准用法
+    - -Wconversion          # 隐式类型转换警告
+    - -Wsign-conversion     # 有符号/无符号转换警告
+    - -Wshadow              # 局部变量遮蔽成员变量警告
+    - -Wnon-virtual-dtor    # 基类有虚函数但析构函数非虚的警告
