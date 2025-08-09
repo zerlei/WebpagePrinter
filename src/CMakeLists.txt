@@ -9,7 +9,7 @@ target_sources(
 
 )
 target_link_libraries(WebpagePrinterTool PRIVATE Qt6::Core Qt6::Sql
-                                                 Qt6::Widgets)
+                                                 Qt6::Widgets Qt6::HttpServer Qt6::WebSockets)
 include_directories()
 # target_include_directories(WebpagePrinterTool
 #                            PRIVATE $ENV{QT6_BASE_PATH}/include)

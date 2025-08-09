@@ -94,12 +94,12 @@ class TestSqliteDb : public QObject {
             page.end_cmd_exec_message = "susuuuuususufsdkfsfdjksadjfjsdfjklfklasjdlfkjsdkljfl";
 
             SqliteDb::instance().addPage(page);
-            auto ps = SqliteDb::instance().getAllPagesDesc(1, 10);
+            auto ps = SqliteDb::instance().getPagesDesc(1, 10);
             QVERIFY(page == ps.back());
             SqliteDb::instance().addPage(page);
             SqliteDb::instance().addPage(page);
             SqliteDb::instance().addPage(page);
-            auto ps2 = SqliteDb::instance().getAllPagesDesc(1, 10);
+            auto ps2 = SqliteDb::instance().getPagesDesc(1, 10);
             QVERIFY(ps2.size() == 4);
         }
 };

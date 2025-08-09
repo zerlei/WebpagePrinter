@@ -26,6 +26,7 @@
           pkgs.kdePackages.full
           pkgs.kdePackages.qtwebengine
           pkgs.kdePackages.qthttpserver
+          pkgs.kdePackages.qtwebsockets
         ];
 
         nativeBuildInputs = [ pkgs.cmake pkgs.kdePackages.wrapQtAppsHook ];
@@ -57,6 +58,8 @@
           export PLANTUML_JAR_PATH=${PLANTUML_JAR}
           # 不知道为什么这个版本QT的compiler_command.json 导不出这个目录，手动加上吧！
           export QT6_BASE_PATH=${pkgs.kdePackages.qtbase}
+          export QT6_HTTPSERVER_PATH=${pkgs.kdePackages.qthttpserver}
+          export QT6_WEBSOCKET_PATH=${pkgs.kdePackages.qtwebsockets}
         '';
       };
     };

@@ -8,7 +8,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_CXX_FLAGS": "-I$env{QT6_BASE_PATH}/include"
+          "CMAKE_CXX_FLAGS": "-I$env{QT6_HTTPSERVER_PATH}/include -I$env{QT6_BASE_PATH}/include -I$env{QT6_WEBSOCKET_PATH}/include"
       }
     },
 
@@ -27,6 +27,7 @@
     {
       "name": "suse",
       "generator": "Ninja",
+      "description": "不在nix 环境中运行, 直接使用系统的Qt6",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",

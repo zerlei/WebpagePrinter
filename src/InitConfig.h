@@ -5,6 +5,7 @@
 #include <QString>
 #include <qobject.h>
 #include <tuple>
+
 class InitConfig {
 
   public:
@@ -13,6 +14,10 @@ class InitConfig {
 #else
     static auto base_dir = "/.WebpagePrinter/";
 #endif
+    static  InitConfig& instance() {
+        static InitConfig config{};
+        return config;
+    }
     InitConfig() {
 
         QDir dir(base_dir);
@@ -29,10 +34,8 @@ class InitConfig {
             local_websocket_server_port =
                 settings.value("local_websocket_server_port", local_websocket_server_port)
                     .toString();
-            remote_websocket_server_ip =
-                settings.value("remote_websocket_server_ip", remote_websocket_server_ip).toString();
-            remote_websocket_server_port =
-                settings.value("remote_websocket_server_port", remote_websocket_server_port)
+            remote_websocket_server_url_only_ws =
+                settings.value("remote_websocket_server_ip", remote_websocket_server_url_only_ws)
                     .toString();
         } else {
             QSettings settings(config_path, QSettings::IniFormat);
@@ -40,8 +43,8 @@ class InitConfig {
             settings.setValue("http_server_port", http_server_port);
             settings.setValue("local_websocket_server_ip", local_websocket_server_ip);
             settings.setValue("local_websocket_server_port", local_websocket_server_port);
-            settings.setValue("remote_websocket_server_ip", remote_websocket_server_ip);
-            settings.setValue("remote_websocket_server_port", remote_websocket_server_port);
+            settings.setValue("remote_websocket_server_url_only_ws",
+                              remote_websocket_server_url_only_ws);
             settings.sync();
         }
     }
@@ -52,15 +55,15 @@ class InitConfig {
     std::tuple<const QString&, const QString&> getLocalWebsocketServerIpPort() const {
         return std::make_tuple(local_websocket_server_ip, local_websocket_server_port);
     }
-    std::tuple<const QString&, const QString&> getRemoteWebsocketServerIpPort() const {
-        return std::make_tuple(remote_websocket_server_ip, remote_websocket_server_port);
+    const QString& getRemoteWebsocketServerUrl() const {
+        return remote_websocket_server_url_only_ws;
     }
 
   private:
+
     QString http_server_ip{"0.0.0.0"};
     QString http_server_port{"8845"};
     QString local_websocket_server_ip{"0.0.0.0"};
     QString local_websocket_server_port{"8846"};
-    QString remote_websocket_server_ip{""};
-    QString remote_websocket_server_port{""};
+    QString remote_websocket_server_url_only_ws{""};
 };

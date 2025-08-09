@@ -320,7 +320,7 @@ void SqliteDb::updatePage(const PrintedPage& page) const {
         LogAddThrow(QString("Update Page Error: ") + query->lastError().text());
     }
 }
-std::deque<PrintedPage> SqliteDb::getAllPagesDesc(int page_index,int page_size) const {
+std::deque<PrintedPage> SqliteDb::getPagesDesc(int page_index,int page_size) const {
 
     std::deque<PrintedPage> pages;
     if (query->exec(QString("SELECT * FROM printed_page order by id desc limit %1 offset %2")

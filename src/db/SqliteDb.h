@@ -59,7 +59,7 @@ class SqliteDb {
      * @param page_size The number of items to retrieve per page.
      * @return A deque of PrintedPage objects.
      */
-    std::deque<PrintedPage> getAllPagesDesc(int page_index, int page_size) const;
+    std::deque<PrintedPage> getPagesDesc(int page_index, int page_size) const;
 
   private:
     SqliteDb();

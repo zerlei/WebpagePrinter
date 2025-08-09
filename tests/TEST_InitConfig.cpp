@@ -37,14 +37,13 @@ class TestInitConfig : public QObject {
             auto [http_server_ip, http_server_port] = init_config->getHttpServerIpPort();
             auto [local_websocket_server_ip, local_websocket_server_port] =
                 init_config->getLocalWebsocketServerIpPort();
-            auto [remote_websocket_server_ip, remote_websocket_server_port] =
-                init_config->getRemoteWebsocketServerIpPort();
+            auto remote_websocket_server_url_only_ws =
+                init_config->getRemoteWebsocketServerUrl();
             QVERIFY(http_server_ip == "0.0.0.0");
             QVERIFY(http_server_port == "8845");
             QVERIFY(local_websocket_server_ip == "0.0.0.0");
             QVERIFY(local_websocket_server_port == "8846");
-            QVERIFY(remote_websocket_server_ip == "");
-            QVERIFY(remote_websocket_server_port == "");
+            QVERIFY(remote_websocket_server_url_only_ws== "");
             delete init_config;
             QSettings settings(QString(InitConfig::base_dir) + "config.ini",
                                QSettings::IniFormat);
@@ -52,8 +51,7 @@ class TestInitConfig : public QObject {
             settings.setValue("http_server_port", "7777");
             settings.setValue("local_websocket_server_ip", "192.168.0.5");
             settings.setValue("local_websocket_server_port", "7778");
-            settings.setValue("remote_websocket_server_ip", "212.129.23.12");
-            settings.setValue("remote_websocket_server_port", "89");
+            settings.setValue("remote_websocket_server_url_only_ws", "ws://212.129.23.12");
             settings.sync();
             {
 
@@ -66,15 +64,14 @@ class TestInitConfig : public QObject {
                 auto [http_server_ip, http_server_port] = init_config->getHttpServerIpPort();
                 auto [local_websocket_server_ip, local_websocket_server_port] =
                     init_config->getLocalWebsocketServerIpPort();
-                auto [remote_websocket_server_ip, remote_websocket_server_port] =
-                    init_config->getRemoteWebsocketServerIpPort();
+                auto remote_websocket_server_url_only_ws=
+                    init_config->getRemoteWebsocketServerUrl();
 #pragma clang diagnostic pop
                 QVERIFY(http_server_ip == "127.0.0.1");
                 QVERIFY(http_server_port == "7777");
                 QVERIFY(local_websocket_server_ip == "192.168.0.5");
                 QVERIFY(local_websocket_server_port == "7778");
-                QVERIFY(remote_websocket_server_ip == "212.129.23.12");
-                QVERIFY(remote_websocket_server_port == "89");
+                QVERIFY(remote_websocket_server_url_only_ws == "ws://212.129.23.12");
             }
         }
 };
