@@ -3,8 +3,16 @@ project(
   WebpagePrinterTool
   VERSION 0.1
   LANGUAGES CXX)
-add_subdirectory(docs)
+if(NOT DEFINED ONLY_EXE)
+  set(ONLY_EXE
+      OFF
+      CACHE BOOL "JUST BUILD EXE")
+endif()
 add_subdirectory(src)
-enable_testing()
-include(CTest)
-add_subdirectory(tests)
+if(NOT ONLY_EXE)
+  add_subdirectory(docs)
+  enable_testing()
+  include(CTest)
+  add_subdirectory(tests)
+endif()
+

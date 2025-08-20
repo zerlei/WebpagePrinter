@@ -24,7 +24,7 @@ void MsgStation::initMsgHandler() {
                              std::promise<QJsonObject> p) {
         // uid websocket 的消息request 和 resp 不限制对应关系,uid 保证了他们的联系,这个由Request
         // 保证 也就是 uid 相同 的 request 和 response 对应
-        int uid = -1;
+        std::optional<int> uid;
         try {
 
             QJsonParseError parse_error;
@@ -86,6 +86,10 @@ void MsgStation::initMsgHandler() {
                         } else {
                             throw JsonParseError(msg, "Parse error: data is not a json object");
                         }
+                        break;
+                    }
+                    case hash(RequestPrintPage::method): {
+                        
                         break;
                     }
 

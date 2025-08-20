@@ -8,10 +8,17 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-          "CMAKE_CXX_FLAGS": "-I$env{QT6_HTTPSERVER_PATH}/include -I$env{QT6_BASE_PATH}/include -I$env{QT6_WEBSOCKET_PATH}/include"
+        "CMAKE_CXX_FLAGS": "-I$env{QT6_HTTPSERVER_PATH}/include -I$env{QT6_BASE_PATH}/include -I$env{QT6_WEBSOCKET_PATH}/include"
       }
     },
-
+    {
+      "name": "nixbuild",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ONLY_EXE": "ON"
+      }
+    },
     {
       "name": "nix2",
       "description": "不需要在flake.nix 中玩体操，参考flake3.nix 但是我不知道为什么这么慢。。。",
@@ -31,7 +38,7 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_TOOLCHAIN_FILE": "/home/zerlei/Qt/6.9.0/gcc_64/lib/cmake/Qt6/qt.toolchain.cmake" ,
+        "CMAKE_TOOLCHAIN_FILE": "/home/zerlei/Qt/6.9.1/gcc_64/lib/cmake/Qt6/qt.toolchain.cmake" ,
         "CMAKE_BUILD_TYPE": "Release"
       }
     }

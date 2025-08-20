@@ -15,10 +15,9 @@
       };
     in {
       packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
-        pname = "WebpagePrinterHelper";
+        pname = "WebpagePrinterTool";
         version = "0.1";
 
-        # The QtQuick project we created with Qt Creator's project wizard is here
         src = ./.;
 
         buildInputs = [
@@ -30,23 +29,32 @@
         ];
 
         nativeBuildInputs = [ pkgs.cmake pkgs.kdePackages.wrapQtAppsHook ];
-
+        configurePhase = ''
+          cmake --preset nixbuild
+        '';
+        buildPhase = ''
+          cmake --build build
+        '';
+        installPhase = ''
+          mkdir -p $out/bin
+          cp build/src/WebpagePrinterTool $out/bin/
+        '';
       };
 
       devShells.x86_64-linux.default = pkgs.mkShell {
 
         inputsFrom = [ self.packages.x86_64-linux.default ];
-        buildInputs = with pkgs; [
+        buildInputs = [
           # for plantuml 500mb+500mb ！！！！ java...
-          openjdk
+          pkgs.openjdk
 
-          graphviz
-          doxygen
-          gdb
+          pkgs.graphviz
+          pkgs.doxygen
+          pkgs.gdb
           # this is for the shellhook portion
-          qt6.wrapQtAppsHook
-          makeWrapper
-          bashInteractive
+          pkgs.qt6.wrapQtAppsHook
+          pkgs.makeWrapper
+          pkgs.bashInteractive
         ];
         shellHook = ''
           # set the environment variables that unpatched Qt apps expect

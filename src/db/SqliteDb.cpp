@@ -10,10 +10,10 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <deque>
 #include <qcontainerfwd.h>
 #include <qdebug.h>
 #include <qlogging.h>
-#include <deque>
 
 // NOLINTBEGIN(readability-identifier-naming)
 Q_LOGGING_CATEGORY(APPLOG, "APP")
@@ -62,7 +62,7 @@ void SqliteDb::initDb() {
 
 template <size_t N>
 bool judgeFieldEqual(const std::deque<std::pair<QString, QString>>& ptt,
-                     std::array<PrinterConfigToTable, N>             rv) {
+                     std::array<PrinterConfigToTable, N>            rv) {
 
     if (ptt.size() != N) {
         return false;
@@ -219,7 +219,7 @@ PrinterConfig SqliteDb::getConfigById(int id) const {
     PrinterConfig printer_config;
     QString       query_command = "SELECT * FROM printer_config WHERE id = " + QString::number(id);
     if (query->exec(query_command)) {
-        while (query->next()) {
+        if (query->next()) {
             printer_config.name          = query->value("name").toString();
             printer_config.is_save_png   = query->value("is_save_png").toInt();
             printer_config.is_to_printer = query->value("is_to_printer").toInt();
@@ -236,6 +236,8 @@ PrinterConfig SqliteDb::getConfigById(int id) const {
             printer_config.printer_orientation = query->value("printer_orientation").toString();
             printer_config.cmd_at_successs_end = query->value("cmd_at_successs_end").toString();
             printer_config.id                  = query->value("id").toInt();
+        } else {
+            LogAddThrow(QString("can't find this config (id: %1)").arg(id));
         }
     } else {
         LogAddThrow(QString("Select Config Error: ") + query->lastError().text());
@@ -320,12 +322,12 @@ void SqliteDb::updatePage(const PrintedPage& page) const {
         LogAddThrow(QString("Update Page Error: ") + query->lastError().text());
     }
 }
-std::deque<PrintedPage> SqliteDb::getPagesDesc(int page_index,int page_size) const {
+std::deque<PrintedPage> SqliteDb::getPagesDesc(int page_index, int page_size) const {
 
     std::deque<PrintedPage> pages;
     if (query->exec(QString("SELECT * FROM printed_page order by id desc limit %1 offset %2")
                         .arg(page_size)
-                        .arg(page_size*(page_index - 1)))) {
+                        .arg(page_size * (page_index - 1)))) {
         while (query->next()) {
             pages.emplace_back();
             auto& page                = pages.back();

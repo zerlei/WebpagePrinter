@@ -3,10 +3,10 @@
 #include <QString>
 
 struct PrinterConfig {
-    PrinterConfig(const PrinterConfig&&) {
-        assert(false && "PrinterConfig should not be moved");
-        throw FatalError("PrintedConfig should not be moved");
-    };
+    // PrinterConfig(const PrinterConfig&&) {
+    //     assert(false && "PrinterConfig should not be moved");
+    //     throw FatalError("PrintedConfig should not be moved");
+    // };
     PrinterConfig() = default;
     /**
      * @brief id 唯一配置主键

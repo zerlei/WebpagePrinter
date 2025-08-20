@@ -2,77 +2,93 @@
 #include "PrintedPage.h"
 #include "PrinterConfig.h"
 #include <deque>
+#include <optional>
 #include <qjsonarray.h>
 #include <qjsonobject.h>
 #include <string_view>
 #include <utility>
 struct RespBase {
-    RespBase()      = delete;
-    bool is_success = false;
-    int  uid{-1};
+    RespBase()                    = delete;
+    bool               is_success = false;
+    std::optional<int> uid;
 };
 struct RespError : RespBase {
     QString            msg{""};
-    static QJsonObject toJsonObject(int uid, const QString& msg) {
+    static QJsonObject toJsonObject(std::optional<int> uid, const QString& msg) {
         QJsonObject obj;
         obj["is_success"] = false;
-        obj["uid"]        = uid;
-        obj["msg"]        = msg;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
+        obj["msg"] = msg;
         return obj;
     }
 };
 struct RequestAddConfig {
     static constexpr inline std::string_view method{"add_config"};
+    std::optional<int>                       uid;
     PrinterConfig                            data{};
 };
 struct RespAddConfig : RespBase {
     int config_id{-1};
 
-    static QJsonObject toJsonObject(int uid, int config_id) {
+    static QJsonObject toJsonObject(std::optional<int> uid, int config_id) {
 
         QJsonObject obj;
         obj["is_success"] = true;
-        obj["uid"]        = uid;
-        obj["config_id"]  = config_id;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
+        obj["config_id"] = config_id;
         return obj;
     }
 };
 
 struct RequestUpdateConfig {
     static constexpr inline std::string_view method{"update_config"};
+    std::optional<int>                       uid;
     PrinterConfig                            data{};
 };
 struct RespUpdateConfig : RespBase {
 
-    static QJsonObject toJsonObject(int uid) {
+    static QJsonObject toJsonObject(std::optional<int> uid) {
         QJsonObject obj;
         obj["is_success"] = true;
-        obj["uid"]        = uid;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
         return obj;
     }
 };
 
 struct RequestDelConfig {
     static constexpr inline std::string_view method{"del_config"};
+    std::optional<int>                       uid;
     int                                      data{};
 };
 struct RespDelConfig : RespBase {
-    static QJsonObject toJsonObject(int uid) {
+    static QJsonObject toJsonObject(std::optional<int> uid) {
         QJsonObject obj;
         obj["is_success"] = true;
-        obj["uid"]        = uid;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
         return obj;
     }
 };
 struct RequestGetAllConfigs {
     static constexpr inline std::string_view method{"get_all_configs"};
+    std::optional<int>                       uid;
 };
 struct RespGetAllConfigs : RespBase {
     std::deque<PrinterConfig> data{};
-    static QJsonObject        toJsonObject(int uid, const std::deque<PrinterConfig>& configs) {
+    static QJsonObject        toJsonObject(std::optional<int>               uid,
+                                           const std::deque<PrinterConfig>& configs) {
         QJsonObject obj;
         obj["is_success"] = true;
-        obj["uid"]        = uid;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
         QJsonArray arr;
         for (auto& config : configs) {
             arr.append(toPrinterConfigJson(config));
@@ -84,16 +100,20 @@ struct RespGetAllConfigs : RespBase {
 
 struct RequestGetPagesDesc {
     static constexpr inline std::string_view method{"get_pages_desc"};
+    std::optional<int>                       uid;
     int                                      page_index{1};
     int                                      page_size{10};
 };
 
 struct RespGetPagesDesc : RespBase {
     std::deque<PrinterConfig> data{};
-    static QJsonObject        toJsonObject(int uid, const std::deque<PrintedPage>& configs) {
+    static QJsonObject        toJsonObject(std::optional<int>             uid,
+                                           const std::deque<PrintedPage>& configs) {
         QJsonObject obj;
         obj["is_success"] = true;
-        obj["uid"]        = uid;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
         QJsonArray arr;
         for (auto& config : configs) {
             arr.append(toPrintedPageJson(config));
@@ -101,4 +121,10 @@ struct RespGetPagesDesc : RespBase {
         obj["data"] = arr;
         return obj;
     }
+};
+
+struct RequestPrintPage {
+    static constexpr inline std::string_view method{"print_page"};
+    std::optional<int>                       uid;
+    PrintedPage                              data{};
 };

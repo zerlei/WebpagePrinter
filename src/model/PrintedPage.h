@@ -3,10 +3,10 @@
 #include <QString>
 #include <qloggingcategory.h>
 struct PrintedPage {
-    PrintedPage(const PrintedPage&&) {
-        assert(false && "PrintedPage should not be moved");
-        throw FatalError("PrintedPage should not be moved");
-    };
+    // PrintedPage(const PrintedPage&&) {
+    //     assert(false && "PrintedPage should not be moved");
+    //     throw FatalError("PrintedPage should not be moved");
+    // };
     PrintedPage() = default;
     /**
      * @brief 主键id
