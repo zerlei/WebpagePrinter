@@ -2,13 +2,17 @@
   "version":9,
   "configurePresets": [
     {
-      "name": "nix",
+      "name": "dnix",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_CXX_FLAGS": "-I$env{QT6_HTTPSERVER_PATH}/include -I$env{QT6_BASE_PATH}/include -I$env{QT6_WEBSOCKET_PATH}/include"
+        "CMAKE_PREFIX_PATH": {
+          "type": "PATH",
+          "value": "$env{QT6_INCLUDE_PATH}/lib/cmake/"
+        },
+        "CMAKE_CXX_FLAGS": "-I$env{QT6_INCLUDE_PATH}/include",
+        "CMAKE_TOOLCHAIN_FILE": "$env{QT6_INCLUDE_PATH}/lib/cmake/Qt6/qt.toolchain.cmake" 
       }
     },
     {
@@ -16,7 +20,8 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "ONLY_EXE": "ON"
+        "ONLY_EXE": "ON",
+        "CMAKE_CXX_FLAGS": "-I$env{QT6_HTTPSERVER_PATH}/include -I$env{QT6_BASE_PATH}/include -I$env{QT6_WEBSOCKET_PATH}/include -I$env{QT6_WEBENGINE_PATH}/include"
       }
     },
     {

@@ -21,14 +21,13 @@
         src = ./.;
 
         buildInputs = [
-          pkgs.kdePackages.qtbase
           pkgs.kdePackages.full
-          pkgs.kdePackages.qtwebengine
-          pkgs.kdePackages.qthttpserver
-          pkgs.kdePackages.qtwebsockets
         ];
 
-        nativeBuildInputs = [ pkgs.cmake pkgs.kdePackages.wrapQtAppsHook ];
+        nativeBuildInputs = [
+          pkgs.cmake
+          # pkgs.kdePackages.wrapQtAppsHook 
+        ];
         configurePhase = ''
           cmake --preset nixbuild
         '';
@@ -51,23 +50,12 @@
           pkgs.graphviz
           pkgs.doxygen
           pkgs.gdb
-          # this is for the shellhook portion
-          pkgs.qt6.wrapQtAppsHook
-          pkgs.makeWrapper
-          pkgs.bashInteractive
         ];
         shellHook = ''
-          # set the environment variables that unpatched Qt apps expect
-          bashdir=$(mktemp -d)
-          makeWrapper "$(type -p bash)" "$bashdir/bash" "''${qtWrapperArgs[@]}"
-          # exec "$bashdir/bash"
-
           # export plantuml jar path
           export PLANTUML_JAR_PATH=${PLANTUML_JAR}
           # 不知道为什么这个版本QT的compiler_command.json 导不出这个目录，手动加上吧！
-          export QT6_BASE_PATH=${pkgs.kdePackages.qtbase}
-          export QT6_HTTPSERVER_PATH=${pkgs.kdePackages.qthttpserver}
-          export QT6_WEBSOCKET_PATH=${pkgs.kdePackages.qtwebsockets}
+          export QT6_INCLUDE_PATH=${pkgs.kdePackages.full}
         '';
       };
     };
