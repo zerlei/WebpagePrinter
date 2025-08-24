@@ -89,7 +89,14 @@ void MsgStation::initMsgHandler() {
                         break;
                     }
                     case hash(RequestPrintPage::method): {
-                        
+
+                        if (obj["data"].isObject()) {
+                            auto page      = obj["data"].toObject();
+                            obj["from_ip"] = from + "--" + ip;
+                            printer_work_flow.addWorkQueue(page, std::move(p));
+                        } else {
+                            throw JsonParseError(msg, "Parse error: data is not a json object");
+                        }
                         break;
                     }
 

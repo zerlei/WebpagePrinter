@@ -74,15 +74,14 @@ struct PrinterConfig {
      */
     QString printer_paper_name;
     /**
-     * @brief 纸张方向
-     *
+     * @brief 纸张方向 Landscape/Portrait
      */
     QString printer_orientation;
     /**
      * @brief 命令行在打印成功后执行
      *
      */
-    QString cmd_at_successs_end;
+    QString cmd_at_end;
 };
 bool inline operator==(const PrinterConfig& a, const PrinterConfig& b) {
     return (a.id == b.id && a.name == b.name && a.is_save_png == b.is_save_png &&
@@ -93,5 +92,5 @@ bool inline operator==(const PrinterConfig& a, const PrinterConfig& b) {
             a.is_use_printer_default_config == b.is_use_printer_default_config &&
             a.printer_paper_name == b.printer_paper_name &&
             a.printer_orientation == b.printer_orientation &&
-            a.cmd_at_successs_end == b.cmd_at_successs_end);
+            a.cmd_at_end == b.cmd_at_end);
 }

@@ -14,7 +14,7 @@ QJsonObject toPrintedPageJson(const PrintedPage& page);
  * @return The deserialized PrintedPage object.
  */
 
-// PrintedPage fromPrintedPageJson(const QString& json);
+PrintedPage fromPrintedPageJson(const QString& json);
 
 /**
  * @brief converts a JSON object to a PrintedPage object.
@@ -23,7 +23,17 @@ QJsonObject toPrintedPageJson(const PrintedPage& page);
  * @param obj object
  * @return PrintedPage
  */
-// PrintedPage fromPrintedPageJson(const QString& json, const QJsonObject& obj);
+/**
+ * @brief 从JSON字符串和QJsonObject对象构造PrintedPage对象。
+ *
+ * 该函数用于将JSON格式的数据转换为PrintedPage对象。通常用于从网络或文件中读取JSON数据后，
+ * 将其转换为程序内部可操作的对象。
+ *
+ * @param json 包含PrintedPage数据的JSON字符串。
+ * @param obj 包含PrintedPage数据的QJsonObject对象。
+ * @return PrintedPage 转换后的PrintedPage对象。
+ */
+PrintedPage fromPrintedPageJson(const QString& json, const QJsonObject& obj);
 
 /**
  * Converts a PrinterConfig object to its JSON string representation.

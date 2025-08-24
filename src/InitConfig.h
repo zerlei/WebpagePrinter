@@ -12,9 +12,9 @@ class InitConfig {
 #ifdef BASE_DIR
     static const inline auto base_dir = QDir::homePath() + QString(BASE_DIR);
 #else
-    static auto base_dir = "/.WebpagePrinter/";
+    static const inline auto base_dir = QDir::homePath() + QString("/.WebpagePrinter/");
 #endif
-    static  InitConfig& instance() {
+    static InitConfig& instance() {
         static InitConfig config{};
         return config;
     }
@@ -60,7 +60,6 @@ class InitConfig {
     }
 
   private:
-
     QString http_server_ip{"0.0.0.0"};
     QString http_server_port{"8845"};
     QString local_websocket_server_ip{"0.0.0.0"};

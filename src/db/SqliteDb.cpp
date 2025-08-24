@@ -175,7 +175,7 @@ void SqliteDb::addConfig(PrinterConfig& config) const {
                          .arg(config.is_use_printer_default_config)
                          .arg(config.printer_paper_name)
                          .arg(config.printer_orientation)
-                         .arg(config.cmd_at_successs_end);
+                         .arg(config.cmd_at_end);
 
     if (query->exec(insert_command)) {
         config.id = query->lastInsertId().toInt();
@@ -201,7 +201,7 @@ void SqliteDb::updateConfig(const PrinterConfig& printer_config) const {
                              .arg(printer_config.is_use_printer_default_config)
                              .arg(printer_config.printer_paper_name)
                              .arg(printer_config.printer_orientation)
-                             .arg(printer_config.cmd_at_successs_end);
+                             .arg(printer_config.cmd_at_end);
     QString after_command = " WHERE id=" + QString::number(printer_config.id);
     update_command += fields_str + after_command;
     if (!query->exec(update_command)) {
@@ -234,7 +234,7 @@ PrinterConfig SqliteDb::getConfigById(int id) const {
                 query->value("is_use_printer_default_config").toInt();
             printer_config.printer_paper_name  = query->value("printer_paper_name").toString();
             printer_config.printer_orientation = query->value("printer_orientation").toString();
-            printer_config.cmd_at_successs_end = query->value("cmd_at_successs_end").toString();
+            printer_config.cmd_at_end = query->value("cmd_at_successs_end").toString();
             printer_config.id                  = query->value("id").toInt();
         } else {
             LogAddThrow(QString("can't find this config (id: %1)").arg(id));
@@ -264,7 +264,7 @@ std::deque<PrinterConfig> SqliteDb::getAllConfigs() const {
                 query->value("is_use_printer_default_config").toInt();
             config.printer_paper_name  = query->value("printer_paper_name").toString();
             config.printer_orientation = query->value("printer_orientation").toString();
-            config.cmd_at_successs_end = query->value("cmd_at_successs_end").toString();
+            config.cmd_at_end = query->value("cmd_at_successs_end").toString();
             config.id                  = query->value("id").toInt();
         }
     } else {

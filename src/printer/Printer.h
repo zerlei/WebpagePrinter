@@ -1,47 +1,36 @@
 #pragma once
-#include <QBuffer>
+#include "DataPack.h"
+#include <QImage>
 #include <QObject>
+#include <QPrinter>
 #include <QTimer>
-#include <QWebEngineView>
-#include <QtPrintSupport/QPrinter>
-#include <QtPrintSupport/QPrinterInfo>
+#include <QtPdf/QPdfDocument>
+#include <functional>
+#include <future>
 #include <qprinterinfo.h>
-#include <qtmetamacros.h>
-
 class Printer : public QObject {
     Q_OBJECT
       public:
         explicit Printer(QObject* parent = nullptr);
-        // Q_SIGNALS:
+        static QList<QPrinterInfo> getAvaliblePrinterInfo();
 
-        const QList<QPrinterInfo>& getAvaliblePrinterInfo() const;
+        void setDataPack(PrinterDataPack * data_pack);
+        void renderPng(std::promise<void> &&p);
+        void toPrinter(std::promise<void> &&p);
 
       private:
-        QList<QPrinterInfo> avaliable_printer_info;
+        QPdfDocument       pdf_doc;
+        QImage*            image{nullptr};
+        PrinterDataPack*   data_pack;
+        QTimer             print_request_timer;
+        QList<QPrinter*>   printers;
 
-        QTimer           print_request_time;
-        QList<QPrinter*> printers;
-        QTimer           timeout_listen;
-        QWebEngineView   render_view;
+        std::function<void(bool,const QString&)> pdf_load_success_callback;
+
       private slots:
-        ///
-        /// \brief 网页加载完毕打印
-        ///
-        void slotLoadFinishTorint(bool);
-        ///
-        /// \brief Js window.print 调用打印页面
-        ///
-        void slotJsPrintRequestToPrint();
+        void slotPdfdocumentStatusChanged(QPdfDocument::Status status);
+      private :
+        void toPrinterResult(bool success, const QString& message,std::promise<void> &&p);
 
-        ///
-        /// \brief SlotPrintRequestTimeOut
-        ///
-
-        void slotPrintRequestTimeOut();
-
-        /// 移动到GUI线程开启打印工作
-        /// \brief SlotMoveToGUIThreadWork
-        ///
-
-        void slotMoveToPrinterThreadWork();
+        bool printImage(QPrinter* printer);
 };

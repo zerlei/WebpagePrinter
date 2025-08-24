@@ -1,4 +1,10 @@
 #pragma once
+#include "../printer/GetConfig.h"
+#include "../printer/LastCmd.h"
+#include "../printer/PageRender.h"
+#include "../printer/RenderPng.h"
+#include "../printer/ToPrinter.h"
+#include "../printer/WorkFlow.h"
 #include "HttpServer.h"
 #include "WebsocketClient.h"
 #include "WebsocketServer.h"
@@ -17,11 +23,14 @@ class MsgStation {
     explicit MsgStation();
 
   private:
-  void initMsgHandler();
+    void initMsgHandler();
+
   private:
     std::unique_ptr<HttpServer>      http_server{nullptr};
     std::unique_ptr<WebsocketServer> websocket_server{nullptr};
     std::unique_ptr<WebsocketClient> websocket_client{nullptr};
     std::function<void(const QString& msg, const QString& ip, const QString& from,
-                       std::promise<QJsonObject>)> message_handler;
+                       std::promise<QJsonObject>)>
+                                                                               message_handler;
+    PrinterWorkFlow<GetConfig<PageRender<RenderPng<ToPrinter<LastCmd>>>>> printer_work_flow;
 };

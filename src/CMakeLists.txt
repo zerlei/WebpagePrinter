@@ -4,7 +4,7 @@ qt_add_executable(WebpagePrinterTool MANUAL_FINALIZATION ${PROJECT_SOURCES})
 target_sources(
   WebpagePrinterTool PRIVATE main.cpp 
   log/log.cpp
-  # printer/Printer.cpp
+  printer/Printer.cpp
   # db/SqliteDb.cpp
 
 

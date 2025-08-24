@@ -45,7 +45,7 @@ class TestSqliteDb : public QObject {
             config.is_use_printer_default_config = 0;
             config.printer_paper_name            = "A4";
             config.printer_orientation           = "Auto";
-            config.cmd_at_successs_end           = "dfadsf";
+            config.cmd_at_end           = "dfadsf";
             SqliteDb::instance().addConfig(config);
 
             PrinterConfig config2 = SqliteDb::instance().getConfigById(config.id);
@@ -63,7 +63,7 @@ class TestSqliteDb : public QObject {
             config.is_use_printer_default_config = 1;
             config.printer_paper_name            = "A45";
             config.printer_orientation           = "Autosdf";
-            config.cmd_at_successs_end           = "vsf";
+            config.cmd_at_end           = "vsf";
 
             SqliteDb::instance().updateConfig(config);
             auto config3 = SqliteDb::instance().getConfigById(config.id);
