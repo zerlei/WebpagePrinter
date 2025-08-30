@@ -124,7 +124,22 @@ struct RespGetPagesDesc : RespBase {
         return obj;
     }
 };
-
+struct RequestGetWebsocketServerPort {
+    static constexpr inline std::string_view method{"get_websocket_server_port"};
+    std::optional<int>                       uid;
+};
+struct RespGetWebsocketServerPort : RespBase {
+    QString            data{""};
+    static QJsonObject toJsonObject(std::optional<int> uid, const QString& port) {
+        QJsonObject obj;
+        obj["is_success"] = true;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
+        obj["data"] = port;
+        return obj;
+    }
+};
 struct RequestGetPrintersInfo {
     static constexpr inline std::string_view method{"get_printers_info"};
     std::optional<int>                       uid;

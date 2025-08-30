@@ -4,10 +4,10 @@
 #include "../exception/JsonParseError.h"
 #include "../model/ModelsJson.h"
 #include "../model/WebInterface.h"
+#include "../printer/Printer.h"
 #include "HttpServer.h"
 #include <memory>
 #include <qjsonobject.h>
-#include "../printer/Printer.h"
 MsgStation::MsgStation() {
     initMsgHandler();
     auto [http_server_ip, http_server_port] = InitConfig::instance().getHttpServerIpPort();
@@ -100,9 +100,15 @@ void MsgStation::initMsgHandler() {
                         }
                         break;
                     }
-
                     case hash(RequestGetPrintersInfo::method): {
-                        p.set_value(RespGetPrintersInfo::toJsonObject(uid,Printer::getAvaliblePrinterInfo()));
+                        p.set_value(RespGetPrintersInfo::toJsonObject(
+                            uid, Printer::getAvaliblePrinterInfo()));
+                        break;
+                    }
+
+                    case hash(RequestGetWebsocketServerPort::method): {
+                        auto [_, port] = InitConfig::instance().getLocalWebsocketServerIpPort();
+                        p.set_value(RespGetWebsocketServerPort::toJsonObject(uid, port));
                         break;
                     }
 

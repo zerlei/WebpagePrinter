@@ -2,6 +2,8 @@
 #include "../exception/FatalError.h"
 #include "QtNetwork/qhostaddress.h"
 #include <QCoreApplication>
+#include <QHttpHeaders>
+#include <QHttpServerResponse>
 #include <future>
 #include <memory>
 #include <qcoreapplication.h>
@@ -29,8 +31,14 @@ HttpServer::HttpServer(
                            auto                      f = p.get_future();
                            this->message_handler(request.body(), request.localAddress().toString(),
                                                  "http", std::move(p));
-
-                           return f.get();
+                           QHttpServerResponse resp(f.get());
+                           QHttpHeaders        cros;
+                           cros.append("Access-Control-Allow-Origin", "*");
+                           cros.append("Access-Control-Allow-Methods", "GET, POST");
+                           cros.append("Access-Control-Allow-Private-Network", "true");
+                           cros.append("Access-Control-Allow-Credentials", "true");
+                           resp.setHeaders(cros);
+                           return resp;
                        });
     if (!tcp_server->listen(QHostAddress(http_server_ip), http_server_port.toUShort()) ||
         !http_server->bind(tcp_server.get())) {
