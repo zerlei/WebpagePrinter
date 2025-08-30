@@ -7,6 +7,7 @@
 #include "HttpServer.h"
 #include <memory>
 #include <qjsonobject.h>
+#include "../printer/Printer.h"
 MsgStation::MsgStation() {
     initMsgHandler();
     auto [http_server_ip, http_server_port] = InitConfig::instance().getHttpServerIpPort();
@@ -100,6 +101,11 @@ void MsgStation::initMsgHandler() {
                         break;
                     }
 
+                    case hash(RequestGetPrintersInfo::method): {
+                        p.set_value(RespGetPrintersInfo::toJsonObject(uid,Printer::getAvaliblePrinterInfo()));
+                        break;
+                    }
+
                     default: {
                         throw JsonParseError(msg, "Parse error: no such method:" + methond);
                     }
@@ -113,6 +119,8 @@ void MsgStation::initMsgHandler() {
             }
         } catch (const JsonParseError& ex) {
             p.set_value(RespError::toJsonObject(uid, ex.what()));
+        } catch (...) {
+            p.set_value(RespError::toJsonObject(uid, "unknown error"));
         }
     };
 }

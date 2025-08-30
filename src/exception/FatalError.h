@@ -16,7 +16,8 @@ class FatalError : public std::exception {
                         .toStdString();
     }
 
+    const char* what() const noexcept override { return error_msg.c_str(); }
+
   private:
     std::string error_msg;
-    const char* what() const noexcept override { return error_msg.c_str(); }
 };

@@ -1,14 +1,14 @@
 #pragma once
-#include <QJsonObject>
 #include "ModelsJson.h"
 #include "PrintedPage.h"
 #include "PrinterConfig.h"
+#include <QJsonObject>
+#include <QPrinterInfo>
 #include <deque>
 #include <optional>
 #include <qjsonarray.h>
 #include <qjsonobject.h>
 #include <string_view>
-#include <utility>
 struct RespBase {
     RespBase()                    = delete;
     bool               is_success = false;
@@ -125,8 +125,55 @@ struct RespGetPagesDesc : RespBase {
     }
 };
 
+struct RequestGetPrintersInfo {
+    static constexpr inline std::string_view method{"get_printers_info"};
+    std::optional<int>                       uid;
+};
+struct PrinterInfo {
+    QString        printer_name{""};
+    QList<QString> supported_paper_names{};
+};
+struct RespGetPrintersInfo : RespBase {
+
+    QList<PrinterInfo> data{};
+
+    static QJsonObject toJsonObject(std::optional<int> uid, const QList<QPrinterInfo>& printers) {
+        QJsonObject obj;
+        obj["is_success"] = true;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
+        QJsonArray arr;
+        for (auto& printer : printers) {
+            QJsonObject printer_obj;
+            printer_obj["printer_name"] = printer.printerName();
+            QJsonArray paper_names_arr;
+            for (auto& paper_name : printer.supportedPageSizes()) {
+                paper_names_arr.append(paper_name.name());
+            }
+            printer_obj["supported_paper_names"] = paper_names_arr;
+            arr.append(printer_obj);
+        }
+        obj["data"] = arr;
+        return obj;
+    }
+};
+
 struct RequestPrintPage {
     static constexpr inline std::string_view method{"print_page"};
     std::optional<int>                       uid;
     PrintedPage                              data{};
+};
+
+struct RespPrintPage : RespBase {
+    QString            file_path{""};
+    static QJsonObject toJsonObject(std::optional<int> uid, const QString& file_path) {
+        QJsonObject obj;
+        obj["is_success"] = true;
+        if (uid.has_value()) {
+            obj["uid"] = uid.value();
+        }
+        obj["data"] = file_path;
+        return obj;
+    }
 };

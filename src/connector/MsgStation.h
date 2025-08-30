@@ -1,6 +1,6 @@
 #pragma once
 #include "../printer/GetConfig.h"
-#include "../printer/LastCmd.h"
+#include "../printer/LastProcess.h"
 #include "../printer/PageRender.h"
 #include "../printer/RenderPng.h"
 #include "../printer/ToPrinter.h"
@@ -32,5 +32,5 @@ class MsgStation {
     std::function<void(const QString& msg, const QString& ip, const QString& from,
                        std::promise<QJsonObject>)>
                                                                                message_handler;
-    PrinterWorkFlow<GetConfig<PageRender<RenderPng<ToPrinter<LastCmd>>>>> printer_work_flow;
+    PrinterWorkFlow<GetConfig<PageRender<RenderPng<ToPrinter<LastProcess>>>>> printer_work_flow;
 };

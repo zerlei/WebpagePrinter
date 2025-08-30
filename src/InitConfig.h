@@ -35,7 +35,7 @@ class InitConfig {
                 settings.value("local_websocket_server_port", local_websocket_server_port)
                     .toString();
             remote_websocket_server_url_only_ws =
-                settings.value("remote_websocket_server_ip", remote_websocket_server_url_only_ws)
+                settings.value("remote_websocket_server_url_only_ws", remote_websocket_server_url_only_ws)
                     .toString();
         } else {
             QSettings settings(config_path, QSettings::IniFormat);

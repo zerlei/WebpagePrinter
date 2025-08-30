@@ -78,19 +78,25 @@ struct PrinterConfig {
      */
     QString printer_orientation;
     /**
-     * @brief 命令行在打印成功后执行
+     * @brief 最后执行的命令
      *
      */
-    QString cmd_at_end;
+    QString process_at_end;
+    /**
+     * @brief 最后执行的命令参数
+     *
+     */
+    QString process_argument_at_end;
 };
 bool inline operator==(const PrinterConfig& a, const PrinterConfig& b) {
     return (a.id == b.id && a.name == b.name && a.is_save_png == b.is_save_png &&
-            a.is_to_printer == b.is_to_printer && a.width_mm == b.width_mm &&
-            a.height_mm == b.height_mm && a.top_margin == b.top_margin &&
-            a.bottom_margin == b.bottom_margin && a.left_margin == b.left_margin &&
-            a.right_margin == b.right_margin && a.printer_name == b.printer_name &&
-            a.is_use_printer_default_config == b.is_use_printer_default_config &&
-            a.printer_paper_name == b.printer_paper_name &&
-            a.printer_orientation == b.printer_orientation &&
-            a.cmd_at_end == b.cmd_at_end);
+                a.is_to_printer == b.is_to_printer && a.width_mm == b.width_mm &&
+                a.height_mm == b.height_mm && a.top_margin == b.top_margin &&
+                a.bottom_margin == b.bottom_margin && a.left_margin == b.left_margin &&
+                a.right_margin == b.right_margin && a.printer_name == b.printer_name &&
+                a.is_use_printer_default_config == b.is_use_printer_default_config &&
+                a.printer_paper_name == b.printer_paper_name &&
+                a.printer_orientation == b.printer_orientation &&
+                a.process_at_end == b.process_at_end &&
+                a.process_argument_at_end == b.process_argument_at_end);
 }

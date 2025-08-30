@@ -37,21 +37,22 @@ constexpr auto printer_config_table_helper = std::to_array({
                          .field_data_type = "INTEGER"},
     PrinterConfigToTable{.field_name = "printer_paper_name", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "printer_orientation", .field_data_type = "TEXT"},
-    PrinterConfigToTable{.field_name = "cmd_at_end", .field_data_type = "TEXT"},
+    PrinterConfigToTable{.field_name = "process_at_end", .field_data_type = "TEXT"},
+    PrinterConfigToTable{.field_name = "process_argument_at_end", .field_data_type = "TEXT"},
 });
 
 constexpr auto printed_page_table_helper = std::to_array({
     PrinterConfigToTable{.field_name = "id", .field_data_type = "INTEGER"},
     PrinterConfigToTable{.field_name = "config_id", .field_data_type = "INTEGER"},
+    PrinterConfigToTable{.field_name = "page_loaded_or_js_request", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "time", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "status", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "from_ip", .field_data_type = "TEXT"},
-    PrinterConfigToTable{.field_name = "page_url", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "page_file_path", .field_data_type = "TEXT"},
+    PrinterConfigToTable{.field_name = "page_url", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "end_cmd_exec_status", .field_data_type = "INTEGER"},
     PrinterConfigToTable{.field_name = "end_cmd_exec_message", .field_data_type = "TEXT"},
     PrinterConfigToTable{.field_name = "error_message", .field_data_type = "TEXT"},
-    PrinterConfigToTable{.field_name = "page_loaded_or_js_request", .field_data_type = "TEXT"},
 });
 template <size_t N>
 consteval auto getCreateTableStrSize(const std::array<PrinterConfigToTable, N>& arr) {

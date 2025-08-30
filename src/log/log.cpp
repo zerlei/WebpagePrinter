@@ -1,5 +1,5 @@
 #include "log.h"
-
+Q_LOGGING_CATEGORY(APPLOG, "APP")
 void LogManager::init(const QString& filePath = "log.txt", qint64 maxSizeBytes = 5 * 1024 * 1024) {
     log_file_path = filePath;
     max_size      = maxSizeBytes;

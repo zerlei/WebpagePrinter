@@ -1,6 +1,7 @@
 #include "WebRender.h"
 #include "../InitConfig.h"
 #include "../exception/FatalError.h"
+#include "../exception/PrintWorkFlowError.h"
 #include "DataPack.h"
 #include <exception>
 #include <future>
@@ -86,7 +87,7 @@ void WebRender::workFinish(bool success, const QString errormag_or_pdfpath) {
         ra.set_value();
     } else {
         pack->page.error_message = errormag_or_pdfpath;
-        ra.set_exception(std::make_exception_ptr(0));
+        ra.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
     }
     is_working = false;
 }

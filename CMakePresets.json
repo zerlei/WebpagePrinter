@@ -1,5 +1,5 @@
 {
-  "version":9,
+  "version": 9,
   "configurePresets": [
     {
       "name": "dnix",
@@ -12,7 +12,7 @@
           "value": "$env{QT6_INCLUDE_PATH}/lib/cmake/"
         },
         "CMAKE_CXX_FLAGS": "-I$env{QT6_INCLUDE_PATH}/include",
-        "CMAKE_TOOLCHAIN_FILE": "$env{QT6_INCLUDE_PATH}/lib/cmake/Qt6/qt.toolchain.cmake" 
+        "CMAKE_TOOLCHAIN_FILE": "$env{QT6_INCLUDE_PATH}/lib/cmake/Qt6/qt.toolchain.cmake"
       }
     },
     {
@@ -21,29 +21,22 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "ONLY_EXE": "ON",
-        "CMAKE_CXX_FLAGS": "-I$env{QT6_HTTPSERVER_PATH}/include -I$env{QT6_BASE_PATH}/include -I$env{QT6_WEBSOCKET_PATH}/include -I$env{QT6_WEBENGINE_PATH}/include"
+        "CMAKE_PREFIX_PATH": {
+          "type": "PATH",
+          "value": "$env{QT6_INCLUDE_PATH}/lib/cmake/"
+        },
+        "CMAKE_CXX_FLAGS": "-I$env{QT6_INCLUDE_PATH}/include",
+        "CMAKE_TOOLCHAIN_FILE": "$env{QT6_INCLUDE_PATH}/lib/cmake/Qt6/qt.toolchain.cmake"
       }
     },
     {
-      "name": "nix2",
-      "description": "不需要在flake.nix 中玩体操，参考flake3.nix 但是我不知道为什么这么慢。。。",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
-      "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS": "-I$env{QT6_BASE_PATH}/include",
-        "CMAKE_TOOLCHAIN_FILE": "$env{QT6_BASE_PATH}/lib/cmake/Qt6/qt.toolchain.cmake" 
-      }
-    },
-    {
-      "name": "suse",
+      "name": "host",
       "generator": "Ninja",
       "description": "不在nix 环境中运行, 直接使用系统的Qt6",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_TOOLCHAIN_FILE": "/home/zerlei/Qt/6.9.1/gcc_64/lib/cmake/Qt6/qt.toolchain.cmake" ,
+        "CMAKE_TOOLCHAIN_FILE": "/home/zerlei/Qt/6.9.1/gcc_64/lib/cmake/Qt6/qt.toolchain.cmake",
         "CMAKE_BUILD_TYPE": "Release"
       }
     }

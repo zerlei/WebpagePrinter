@@ -101,7 +101,8 @@ QJsonObject toPrinterConfigJson(const PrinterConfig& config) {
     obj["is_use_printer_default_config"] = config.is_use_printer_default_config;
     obj["printer_paper_name"]            = config.printer_paper_name;
     obj["printer_orientation"]           = config.printer_orientation;
-    obj["cmd_at_end"]                    = config.cmd_at_end;
+    obj["process_at_end"]                = config.process_at_end;
+    obj["process_argument_at_end"]       = config.process_argument_at_end;
     return obj;
 }
 PrinterConfig fromPrinterConfigJson(const QString& json) {
@@ -194,8 +195,11 @@ PrinterConfig fromPrinterConfigJson(const QString& source_json, const QJsonObjec
     if (obj["printer_orientation"].isString()) {
         config.printer_orientation = obj["printer_orientation"].toString();
     }
-    if (obj["cmd_at_end"].isString()) {
-        config.cmd_at_end = obj["cmd_at_end"].toString();
+    if (obj["process_at_end"].isString()) {
+        config.process_at_end = obj["process_at_end"].toString();
+    }
+    if (obj["process_argument_at_end"].isString()) {
+        config.process_argument_at_end = obj["process_argument_at_end"].toString();
     }
     return config;
 }

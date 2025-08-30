@@ -1,8 +1,4 @@
-
 build
 .cache
 .vscode
-log.txt
 result
-/test/node_modules
-

@@ -14,10 +14,6 @@
 #include <qcontainerfwd.h>
 #include <qdebug.h>
 #include <qlogging.h>
-
-// NOLINTBEGIN(readability-identifier-naming)
-Q_LOGGING_CATEGORY(APPLOG, "APP")
-// NOLINTEND(readability-identifier-naming)
 #define LogAddThrow(arg)                                                                           \
     qCritical(APPLOG) << (arg);                                                                    \
     throw SqliteOpError((arg))
@@ -175,7 +171,8 @@ void SqliteDb::addConfig(PrinterConfig& config) const {
                          .arg(config.is_use_printer_default_config)
                          .arg(config.printer_paper_name)
                          .arg(config.printer_orientation)
-                         .arg(config.cmd_at_end);
+                         .arg(config.process_at_end)
+                         .arg(config.process_argument_at_end);
 
     if (query->exec(insert_command)) {
         config.id = query->lastInsertId().toInt();
@@ -201,7 +198,8 @@ void SqliteDb::updateConfig(const PrinterConfig& printer_config) const {
                              .arg(printer_config.is_use_printer_default_config)
                              .arg(printer_config.printer_paper_name)
                              .arg(printer_config.printer_orientation)
-                             .arg(printer_config.cmd_at_end);
+                             .arg(printer_config.process_at_end)
+                             .arg(printer_config.process_argument_at_end);
     QString after_command = " WHERE id=" + QString::number(printer_config.id);
     update_command += fields_str + after_command;
     if (!query->exec(update_command)) {
@@ -234,8 +232,10 @@ PrinterConfig SqliteDb::getConfigById(int id) const {
                 query->value("is_use_printer_default_config").toInt();
             printer_config.printer_paper_name  = query->value("printer_paper_name").toString();
             printer_config.printer_orientation = query->value("printer_orientation").toString();
-            printer_config.cmd_at_end = query->value("cmd_at_successs_end").toString();
-            printer_config.id                  = query->value("id").toInt();
+            printer_config.process_at_end      = query->value("process_at_end").toString();
+            printer_config.process_argument_at_end =
+                query->value("process_argument_at_end").toString();
+            printer_config.id = query->value("id").toInt();
         } else {
             LogAddThrow(QString("can't find this config (id: %1)").arg(id));
         }
@@ -262,10 +262,11 @@ std::deque<PrinterConfig> SqliteDb::getAllConfigs() const {
             config.printer_name  = query->value("printer_name").toString();
             config.is_use_printer_default_config =
                 query->value("is_use_printer_default_config").toInt();
-            config.printer_paper_name  = query->value("printer_paper_name").toString();
-            config.printer_orientation = query->value("printer_orientation").toString();
-            config.cmd_at_end = query->value("cmd_at_successs_end").toString();
-            config.id                  = query->value("id").toInt();
+            config.printer_paper_name      = query->value("printer_paper_name").toString();
+            config.printer_orientation     = query->value("printer_orientation").toString();
+            config.process_at_end          = query->value("process_at_end").toString();
+            config.process_argument_at_end = query->value("process_argument_at_end").toString();
+            config.id                      = query->value("id").toInt();
         }
     } else {
         LogAddThrow(QString("Select Config Error: ") + query->lastError().text());
@@ -296,11 +297,17 @@ void SqliteDb::addPage(PrintedPage& page) const {
     }
     insert_command += after_command;
     insert_command = insert_command.arg(page.config_id)
+                         .arg(page.page_loaded_or_js_request)
                          .arg(page.time)
                          .arg(page.status)
                          .arg(page.from_ip)
+                         .arg(page.page_file_path)
                          .arg(page.page_url)
-                         .arg(page.end_cmd_exec_message);
+                         .arg(page.end_cmd_exec_status)
+                         .arg(page.end_cmd_exec_message)
+                         .arg(page.error_message);
+
+    qDebug() << insert_command;
     if (query->exec(insert_command)) {
         page.id = query->lastInsertId().toInt();
     } else {
@@ -311,11 +318,15 @@ void SqliteDb::updatePage(const PrintedPage& page) const {
     QString update_command = QString("UPDATE printed_page SET ");
     QString fields_str     = QString(update_page_table_str.data)
                              .arg(page.config_id)
+                             .arg(page.page_loaded_or_js_request)
                              .arg(page.time)
                              .arg(page.status)
                              .arg(page.from_ip)
+                             .arg(page.page_file_path)
                              .arg(page.page_url)
-                             .arg(page.end_cmd_exec_message);
+                             .arg(page.end_cmd_exec_status)
+                             .arg(page.end_cmd_exec_message)
+                             .arg(page.error_message);
     QString after_command = " WHERE id=" + QString::number(page.id);
     update_command += fields_str + after_command;
     if (!query->exec(update_command)) {
@@ -330,14 +341,17 @@ std::deque<PrintedPage> SqliteDb::getPagesDesc(int page_index, int page_size) co
                         .arg(page_size * (page_index - 1)))) {
         while (query->next()) {
             pages.emplace_back();
-            auto& page                = pages.back();
-            page.id                   = query->value("id").toInt();
-            page.config_id            = query->value("config_id").toInt();
-            page.time                 = query->value("time").toString();
-            page.status               = query->value("status").toString();
-            page.from_ip              = query->value("from_ip").toString();
-            page.page_url             = query->value("page_url").toString();
-            page.end_cmd_exec_message = query->value("end_cmd_exec_message").toString();
+            auto& page                     = pages.back();
+            page.id                        = query->value("id").toInt();
+            page.config_id                 = query->value("config_id").toInt();
+            page.page_loaded_or_js_request = query->value("page_loaded_or_js_request").toString();
+            page.time                      = query->value("time").toString();
+            page.status                    = query->value("status").toString();
+            page.from_ip                   = query->value("from_ip").toString();
+            page.page_file_path            = query->value("page_file_path").toString();
+            page.page_url                  = query->value("page_url").toString();
+            page.end_cmd_exec_message      = query->value("end_cmd_exec_message").toString();
+            page.error_message             = query->value("error_message").toString();
         }
     } else {
         LogAddThrow(QString("Select Page Error: ") + query->lastError().text());

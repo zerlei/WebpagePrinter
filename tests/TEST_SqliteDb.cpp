@@ -45,7 +45,10 @@ class TestSqliteDb : public QObject {
             config.is_use_printer_default_config = 0;
             config.printer_paper_name            = "A4";
             config.printer_orientation           = "Auto";
-            config.cmd_at_end           = "dfadsf";
+            config.process_at_end                = "dfadsf";
+            config.process_argument_at_end       = "dfss..132;sdf";
+
+            //will update config.id by sqlitedb primary key auto increment
             SqliteDb::instance().addConfig(config);
 
             PrinterConfig config2 = SqliteDb::instance().getConfigById(config.id);
@@ -63,7 +66,8 @@ class TestSqliteDb : public QObject {
             config.is_use_printer_default_config = 1;
             config.printer_paper_name            = "A45";
             config.printer_orientation           = "Autosdf";
-            config.cmd_at_end           = "vsf";
+            config.process_at_end                = "vsf";
+            config.process_argument_at_end       = "dfss..132;sfdsfxcfssdf";
 
             SqliteDb::instance().updateConfig(config);
             auto config3 = SqliteDb::instance().getConfigById(config.id);
@@ -85,13 +89,16 @@ class TestSqliteDb : public QObject {
         }
         void checkPageOp() {
             PrintedPage page{};
-            page.id                   = 0;
-            page.config_id            = 1;
-            page.time                 = "2013";
-            page.status               = "UUU";
-            page.from_ip              = "1.1.1.1";
-            page.page_url             = "bing.com";
-            page.end_cmd_exec_message = "susuuuuususufsdkfsfdjksadjfjsdfjklfklasjdlfkjsdkljfl";
+            page.id                        = 0;
+            page.config_id                 = 1;
+            page.page_loaded_or_js_request = "PAGE_LOADED";
+            page.time                      = "2013";
+            page.status                    = "UUU";
+            page.from_ip                   = "1.1.1.1";
+            page.page_file_path            = "/home/hhhh/";
+            page.page_url                  = "bing.com";
+            page.end_cmd_exec_message      = "susuuuuususufsdkfsfdjksadjfjsdfjklfklasjdlfkjsdkljfl";
+            page.error_message             = "NO Error";
 
             SqliteDb::instance().addPage(page);
             auto ps = SqliteDb::instance().getPagesDesc(1, 10);

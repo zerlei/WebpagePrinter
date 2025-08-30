@@ -1,32 +1,27 @@
-// #include "log/log.h"
+#include "InitConfig.h"
+#include "connector/MsgStation.h"
+#include "db/SqliteDb.h"
+#include "exception/FatalError.h"
+#include "log/log.h"
 #include <QApplication>
 #include <QDebug>
 #include <QUrl>
-#include <QWidget>
 #include <QWebEngineView>
-using namespace Qt::StringLiterals;
-// Q_LOGGING_CATEGORY(AppLog, "app")
-// Q_LOGGING_CATEGORY(NetLog, "app.net")
-// Q_LOGGING_CATEGORY(UiLog, "app.ui")
-//
-/**
- * @brief 你好 这是main 函数
- *
- * @param argc  传递多少个参数
- * @param argv  传递的参数
- * @return int 返回值
- */
+#include <QWidget>
 int main(int argc, char* argv[]) {
-    QApplication   a(argc, argv);
-    QWebEngineView view;
-    view.load(QUrl("https://qt-project.org/"));
-    view.resize(1024, 750);
-    view.show();
-    //
-    // LogManager::init("log.txt", 5 * 1024 * 1024); // 每 5 MB 切割一次
-    // qCDebug(AppLog) << "Application started";
-    // qCWarning(NetLog) << "Network delay detected";
-    // qCCritical(UiLog) << "UI failed to load";
+    QApplication a(argc, argv);
+    LogManager::init(InitConfig::base_dir + "log.txt", 5 * 1024 * 1024);
+    QObject::connect(&a, &QApplication::aboutToQuit, []() { qCInfo(APPLOG) << "Normal Exit..."; });
+    try {
+        InitConfig::instance();
+        SqliteDb::instance();
+        MsgStation msg_station;
+    } catch (const FatalError& e) {
+        qCFatal(APPLOG) << e.what();
+    } catch (...) {
+        qCFatal(APPLOG) << "Unknown error";
+    }
+    qCInfo(APPLOG) << "Start...";
 
     return QApplication::exec();
 }

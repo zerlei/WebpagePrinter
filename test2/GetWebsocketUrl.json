@@ -1,8 +1,0 @@
-{
-    "Id": "GetWebsocketUrl",
-    "IsSuccess": true,
-    "Result": {
-        "IsConnected": true,
-        "WebSocUrl": "ws://127.0.0.1:8008"
-    }
-}

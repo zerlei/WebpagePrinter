@@ -1,4 +1,5 @@
 #include "Printer.h"
+#include "../exception/PrintWorkFlowError.h"
 #include "DataPack.h"
 #include <QImageWriter>
 #include <QPainter>
@@ -16,9 +17,13 @@ Printer::Printer(QObject* parent)
 }
 
 void Printer::setDataPack(PrinterDataPack* pack) {
-    delete image;
-    pdf_load_success_callback = [](bool, const QString&) {};
-    data_pack                 = pack;
+
+    if (pack != data_pack) {
+        delete image;
+        image                     = nullptr;
+        pdf_load_success_callback = [](bool, const QString&) {};
+        data_pack                 = pack;
+    }
 }
 void Printer::renderPng(std::promise<void>&& p) {
     auto f = [&p, this](bool success, const QString& message) {
@@ -31,11 +36,11 @@ void Printer::renderPng(std::promise<void>&& p) {
                 p.set_value();
             } else {
                 data_pack->page.error_message = "can't write png file";
-                p.set_exception(std::make_exception_ptr(0));
+                p.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
             }
         } else {
             data_pack->page.error_message = message;
-            p.set_exception(std::make_exception_ptr(0));
+            p.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
         }
     };
 
@@ -115,7 +120,7 @@ void Printer::toPrinterResult(bool success, const QString& message, std::promise
         }
     } else {
         data_pack->page.error_message = message;
-        p.set_exception(std::make_exception_ptr(0));
+        p.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
     }
 }
 bool Printer::printImage(QPrinter* printer) {

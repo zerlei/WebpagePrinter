@@ -6,7 +6,9 @@ template <typename T>
 class GetConfig {
     static constexpr STEP step = GET_CONFIG;
 
-    T    next;
+    T next;
+
+  public:
     void work(PrinterDataPack& data_pack) {
         try {
 

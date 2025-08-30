@@ -1,5 +1,7 @@
 #pragma once
 #include "../db/SqliteDb.h"
+#include "../exception/PrintWorkFlowError.h"
+#include "../exception/SqliteOpError.h"
 #include "../model/WebInterface.h"
 #include "DataPack.h"
 #include "WebRender.h"
@@ -22,9 +24,11 @@ class PageRender {
             data_pack.page.status = step_str[step];
             SqliteDb::instance().updatePage(data_pack.page);
             next.work(data_pack);
-        } catch (int v) {
+        } catch (const PrintWorkFlowError&) {
             data_pack.setPromiseValue(
                 RespError::toJsonObject(data_pack.uid, data_pack.page.error_message));
+        } catch (const SqliteOpError& e) {
+            data_pack.setPromiseValue(RespError::toJsonObject(data_pack.uid, e.what()));
         }
     }
 };

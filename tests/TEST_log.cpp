@@ -8,7 +8,6 @@
 #include <qloggingcategory.h>
 #include <qnumeric.h>
 #include <qtestcase.h>
-Q_LOGGING_CATEGORY(APPLOG, "APP")
 class TestLog : public QObject {
     Q_OBJECT
       private:
