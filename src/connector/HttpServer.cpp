@@ -6,6 +6,7 @@
 #include <QHttpServerResponse>
 #include <functional>
 #include <memory>
+#include "../InitConfig.h"
 #include <qcoreapplication.h>
 #include <qjsonobject.h>
 HttpServer::HttpServer(std::function<void(const QString&, const QString&, const QString&,
@@ -17,8 +18,17 @@ HttpServer::HttpServer(std::function<void(const QString&, const QString&, const 
     http_server   = std::make_unique<QHttpServer>();
     tcp_server    = std::make_unique<QTcpServer>();
     auto app_path = QCoreApplication::applicationDirPath();
+
+    QDir dir(app_path+"/wwwroot");
+    if(!dir.exists()) {
+        app_path = InitConfig::base_dir;
+    }
     http_server->route("/", [app_path]() {
         auto filepath = QString("%1/wwwroot/index.html").arg(app_path);
+        return QHttpServerResponse::fromFile(filepath);
+    });
+    http_server->route("/favicon.ico", [app_path]() {
+        auto filepath = QString("%1/wwwroot/favicon.ico").arg(app_path);
         return QHttpServerResponse::fromFile(filepath);
     });
     http_server->route("/assets/<arg>", [app_path](const QUrl& url) {

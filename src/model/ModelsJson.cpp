@@ -77,7 +77,7 @@ PrintedPage fromPrintedPageJson(const QString& source_json, const QJsonObject& o
     if (obj["end_cmd_exec_message"].isString()) {
         page.end_cmd_exec_message = obj["end_cmd_exec_message"].toString();
     }
-    if (obj["end_cmd_exec_status"].isString()) {
+    if (obj["end_cmd_exec_status"].isDouble()) {
         page.end_cmd_exec_status = obj["end_cmd_exec_status"].toInt();
     }
     if (obj["error_message"].isString()) {

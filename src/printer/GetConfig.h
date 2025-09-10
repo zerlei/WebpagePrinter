@@ -5,12 +5,13 @@
 template <typename T>
 class GetConfig {
     static constexpr STEP step = GET_CONFIG;
-    T next;
+    T                     next;
 
   public:
     void work(PrinterDataPack& data_pack) {
         try {
 
+            qDebug() << step_str[step];
             try {
                 data_pack.config = SqliteDb::instance().getConfigById(data_pack.page.config_id);
             } catch (const SqliteOpError& e) {

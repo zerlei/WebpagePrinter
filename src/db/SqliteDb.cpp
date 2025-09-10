@@ -308,7 +308,6 @@ void SqliteDb::addPage(PrintedPage& page) const {
                          .arg(page.end_cmd_exec_message)
                          .arg(page.error_message);
 
-    qDebug() << insert_command;
     if (query->exec(insert_command)) {
         page.id = query->lastInsertId().toInt();
     } else {
@@ -334,7 +333,8 @@ void SqliteDb::updatePage(const PrintedPage& page) const {
         LogAddThrow(QString("Update Page Error: ") + query->lastError().text());
     }
 }
-std::tuple<std::deque<PrintedPage>, int> SqliteDb::getPagesDesc(int page_index, int page_size) const {
+std::tuple<std::deque<PrintedPage>, int> SqliteDb::getPagesDesc(int page_index,
+                                                                int page_size) const {
 
     std::deque<PrintedPage> pages;
     if (query->exec(QString("SELECT * FROM printed_page order by id desc limit %1 offset %2")
@@ -352,6 +352,7 @@ std::tuple<std::deque<PrintedPage>, int> SqliteDb::getPagesDesc(int page_index, 
             page.page_file_path            = query->value("page_file_path").toString();
             page.page_url                  = query->value("page_url").toString();
             page.end_cmd_exec_message      = query->value("end_cmd_exec_message").toString();
+            page.end_cmd_exec_status       = query->value("end_cmd_exec_status").toInt();
             page.error_message             = query->value("error_message").toString();
         }
     } else {

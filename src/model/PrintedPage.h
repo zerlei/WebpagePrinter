@@ -53,7 +53,7 @@ struct PrintedPage {
      * @brief 最终执行命令的返回状态
      *
      */
-    int end_cmd_exec_status;
+    int end_cmd_exec_status{-1};
     /**
      * @brief 最终执行命令的返回信息
      *

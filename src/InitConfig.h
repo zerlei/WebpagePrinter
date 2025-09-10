@@ -49,13 +49,13 @@ class InitConfig {
         }
     }
 
-    std::tuple<const QString&, const QString&> getHttpServerIpPort() const {
+    std::tuple<const QString, const QString> getHttpServerIpPort() const {
         return std::make_tuple(http_server_ip, http_server_port);
     }
-    std::tuple<const QString&, const QString&> getLocalWebsocketServerIpPort() const {
+    std::tuple<const QString, const QString> getLocalWebsocketServerIpPort() const {
         return std::make_tuple(local_websocket_server_ip, local_websocket_server_port);
     }
-    const QString& getRemoteWebsocketServerUrl() const {
+    const QString getRemoteWebsocketServerUrl() const {
         return remote_websocket_server_url_only_ws;
     }
 

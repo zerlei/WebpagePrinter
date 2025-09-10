@@ -10,6 +10,7 @@ class RenderPng {
 
   public:
     void work(PrinterDataPack& data_pack) {
+        qDebug()<<step_str[step];
         if (data_pack.config.is_save_png == 1) {
             CanExceptionCallback callback(
                 [this, &data_pack]() {
@@ -22,6 +23,7 @@ class RenderPng {
                     }
                 },
                 [this, &data_pack](const PrintWorkFlowError&) {
+                    SqliteDb::instance().updatePage(data_pack.page);
                     data_pack.setRespValue(
                         RespError::toJsonObject(data_pack.uid, data_pack.page.error_message));
                 });

@@ -1,6 +1,13 @@
 include("${CMAKE_SOURCE_DIR}/cmake/QtCommon.cmake")
 qt_add_executable(WebpagePrinterTool MANUAL_FINALIZATION ${PROJECT_SOURCES})
-
+target_include_directories(WebpagePrinterTool
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/db
+        ${CMAKE_SOURCE_DIR}/src/excep
+        ${CMAKE_SOURCE_DIR}/src/log
+        ${CMAKE_SOURCE_DIR}/src/model
+        ${CMAKE_SOURCE_DIR}/src/printer
+    )
 target_sources(
   WebpagePrinterTool PRIVATE main.cpp 
   connector/HttpServer.cpp
