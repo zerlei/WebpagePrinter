@@ -1,0 +1,39 @@
+Checks: >
+  clang-analyzer-core.*,
+  clang-analyzer-cplusplus.*,
+  modernize-redundant-void-arg,
+  modernize-use-bool-literals,
+  modernize-use-equals-default,
+  modernize-use-nullptr,
+  modernize-use-override,
+  google-explicit-constructor,
+  google-readability-casting,
+  readability-braces-around-statements,
+  readability-identifier-naming,
+  readability-identifier-naming,
+  readability-identifier-naming,
+  readability-identifier-naming,
+  readability-non-const-parameter,
+  cert-dcl21-cpp,
+  bugprone-undelegated-constructor,
+  bugprone-macro-parentheses,
+  bugprone-macro-repeated-side-effects,
+  bugprone-forward-declaration-namespace,
+  bugprone-bool-pointer-implicit-conversion,
+  bugprone-misplaced-widening-cast,
+  cppcoreguidelines-narrowing-conversions,
+  cppcoreguidelines-pro-type-reinterpret-cast,
+  misc-unconventional-assign-operator
+
+# ref https://clang.llvm.org/extra/clang-tidy/index.html
+CheckOptions:
+  - key:             readability-identifier-naming.VariableCase
+    value:           lower_case
+  - key:             readability-identifier-naming.FunctionCase
+    value:           camelBack
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.MemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.NamespaceCase
+    value:           lower_case
