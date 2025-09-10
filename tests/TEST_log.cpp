@@ -8,7 +8,7 @@
 #include <qloggingcategory.h>
 #include <qnumeric.h>
 #include <qtestcase.h>
-class TestLog : public QObject {
+class TestPrint : public QObject {
     Q_OBJECT
       private:
         /**
@@ -102,5 +102,5 @@ class TestLog : public QObject {
             QVERIFY(numbers > 1);
         }
 };
-QTEST_MAIN(TestLog)
+QTEST_MAIN(TestPrint)
 #include "TEST_log.moc"

@@ -1,13 +1,14 @@
 #include "WebsocketServer.h"
 #include <QJsonObject>
 #include <QtCore/QDebug>
+#include <functional>
 #include <qjsondocument.h>
 
-WebsocketServer::WebsocketServer(
-    const QString& host_address, const QString& port,
-    std::function<void(const QString&, const QString&, const QString&, std::promise<QJsonObject>)>
-             message_handler,
-    QObject* parent)
+WebsocketServer::WebsocketServer(const QString& host_address, const QString& port,
+                                 std::function<void(const QString&, const QString&, const QString&,
+                                                    std::move_only_function<void(QJsonObject)>)>
+                                          message_handler,
+                                 QObject* parent)
     : QObject(parent)
     , websocket_server(
           new QWebSocketServer(QStringLiteral(""), QWebSocketServer::NonSecureMode, this))
@@ -34,12 +35,11 @@ void WebsocketServer::onNewConnection() {
 void WebsocketServer::processTextMessage(QString message) {
     QWebSocket* client = qobject_cast<QWebSocket*>(sender());
     if (client) {
-        std::promise<QJsonObject> p;
-        auto                      f = p.get_future();
-        this->message_handler(message, client->peerAddress().toString(), "websocket_server",
-                              std::move(p));
-        auto v = QJsonDocument(f.get()).toJson();
-        client->sendTextMessage(v);
+        auto f = [client](QJsonObject obj) {
+            auto v = QJsonDocument(obj).toJson();
+            client->sendTextMessage(v);
+        };
+        this->message_handler(message, client->peerAddress().toString(), "websocket_server", f);
     }
 }
 

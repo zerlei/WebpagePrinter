@@ -5,6 +5,7 @@
 #include <QSqlQuery>
 #include <deque>
 #include <memory>
+#include <tuple>
 
 class SqliteDb {
   public:
@@ -57,9 +58,9 @@ class SqliteDb {
      *
      * @param page_index The starting index for pagination.
      * @param page_size The number of items to retrieve per page.
-     * @return A deque of PrintedPage objects.
+     * @return A deque of PrintedPage objects and count
      */
-    std::deque<PrintedPage> getPagesDesc(int page_index, int page_size) const;
+    std::tuple<std::deque<PrintedPage>, int> getPagesDesc(int page_index, int page_size) const;
 
   private:
     SqliteDb();

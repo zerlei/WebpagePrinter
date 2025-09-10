@@ -101,13 +101,14 @@ class TestSqliteDb : public QObject {
             page.error_message             = "NO Error";
 
             SqliteDb::instance().addPage(page);
-            auto ps = SqliteDb::instance().getPagesDesc(1, 10);
+            auto [ps,count] = SqliteDb::instance().getPagesDesc(1, 10);
             QVERIFY(page == ps.back());
+            QVERIFY(count == 1);
             SqliteDb::instance().addPage(page);
             SqliteDb::instance().addPage(page);
             SqliteDb::instance().addPage(page);
-            auto ps2 = SqliteDb::instance().getPagesDesc(1, 10);
-            QVERIFY(ps2.size() == 4);
+            auto [__,count2]= SqliteDb::instance().getPagesDesc(1, 10);
+            QVERIFY(count2 == 4);
         }
 };
 QTEST_MAIN(TestSqliteDb)

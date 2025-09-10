@@ -1,5 +1,5 @@
 #include "ModelsJson.h"
-#include "../exception/JsonParseError.h"
+#include "../excep/JsonParseError.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <qjsonobject.h>
@@ -125,20 +125,14 @@ PrinterConfig fromPrinterConfigJson(const QString& source_json, const QJsonObjec
     }
     if (obj["name"].isString()) {
         config.name = obj["name"].toString();
-    } else {
-        throw JsonParseError(source_json, "Parse error: name is not a string");
     }
 
-    if (obj["is_save_png"].isBool()) {
-        config.is_save_png = obj["is_save_png"].toBool();
-    } else {
-        throw JsonParseError(source_json, "Parse error: is_save_png is not a bool");
+    if (obj["is_save_png"].isDouble()) {
+        config.is_save_png = obj["is_save_png"].toInt();
     }
 
-    if (obj["is_to_printer"].isBool()) {
-        config.is_to_printer = obj["is_to_printer"].toBool();
-    } else {
-        throw JsonParseError(source_json, "Parse error: is_to_printer is not a bool");
+    if (obj["is_to_printer"].isDouble()) {
+        config.is_to_printer = obj["is_to_printer"].toInt();
     }
 
     if (obj["width_mm"].isDouble()) {
@@ -155,37 +149,26 @@ PrinterConfig fromPrinterConfigJson(const QString& source_json, const QJsonObjec
 
     if (obj["top_margin"].isDouble()) {
         config.top_margin = obj["top_margin"].toInt();
-    } else {
-        throw JsonParseError(source_json, "Parse error: top_margin is not a number");
     }
 
     if (obj["bottom_margin"].isDouble()) {
         config.bottom_margin = obj["bottom_margin"].toInt();
-    } else {
-        throw JsonParseError(source_json, "Parse error: bottom_margin is not a number");
     }
 
     if (obj["left_margin"].isDouble()) {
         config.left_margin = obj["left_margin"].toInt();
-    } else {
-        throw JsonParseError(source_json, "Parse error: left_margin is not a number");
     }
 
     if (obj["right_margin"].isDouble()) {
         config.right_margin = obj["right_margin"].toInt();
-    } else {
-        throw JsonParseError(source_json, "Parse error: right_margin is not a number");
     }
 
     if (obj["printer_name"].isString()) {
         config.printer_name = obj["printer_name"].toString();
     }
 
-    if (obj["is_use_printer_default_config"].isBool()) {
-        config.is_use_printer_default_config = obj["is_use_printer_default_config"].toBool();
-    } else {
-        throw JsonParseError(source_json,
-                             "Parse error: is_use_printer_default_config is not a bool");
+    if (obj["is_use_printer_default_config"].isDouble()) {
+        config.is_use_printer_default_config = obj["is_use_printer_default_config"].toInt();
     }
 
     if (obj["printer_paper_name"].isString()) {

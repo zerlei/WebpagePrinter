@@ -5,16 +5,16 @@
 #include <QtWebSockets/QWebSocket>
 #include <QtWebSockets/QWebSocketServer>
 #include <functional>
-#include <future>
 
 class WebsocketServer : public QObject {
     Q_OBJECT
       public:
-        explicit WebsocketServer(const QString& host_address, const QString& port,
-                                 std::function<void(const QString& port, const QString&,
-                                                    const QString&, std::promise<QJsonObject>)>
-                                          message_handler,
-                                 QObject* parent = nullptr);
+        explicit WebsocketServer(
+            const QString& host_address, const QString& port,
+            std::function<void(const QString& port, const QString&, const QString&,
+                               std::move_only_function<void(QJsonObject)>)>
+                     message_handler,
+            QObject* parent = nullptr);
         ~WebsocketServer();
 
       Q_SIGNALS:
@@ -33,6 +33,6 @@ class WebsocketServer : public QObject {
          */
         QList<QWebSocket*> clients;
         std::function<void(const QString&, const QString&, const QString&,
-                           std::promise<QJsonObject>)>
+                           std::move_only_function<void(QJsonObject)>)>
             message_handler;
 };

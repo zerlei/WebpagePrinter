@@ -1,11 +1,10 @@
 #include "Printer.h"
-#include "../exception/PrintWorkFlowError.h"
+#include "../excep/PrintWorkFlowError.h"
 #include "DataPack.h"
 #include <QImageWriter>
 #include <QPainter>
 #include <algorithm>
-#include <exception>
-#include <future>
+#include <memory>
 QList<QPrinterInfo> Printer::getAvaliblePrinterInfo() {
     return QPrinterInfo::availablePrinters();
 }
@@ -18,29 +17,29 @@ Printer::Printer(QObject* parent)
 
 void Printer::setDataPack(PrinterDataPack* pack) {
 
-    if (pack != data_pack) {
-        delete image;
+    if (current_page_id != pack->page.id) {
         image                     = nullptr;
         pdf_load_success_callback = [](bool, const QString&) {};
         data_pack                 = pack;
+        current_page_id            = pack->page.id;
     }
 }
-void Printer::renderPng(std::promise<void>&& p) {
-    auto f = [&p, this](bool success, const QString& message) {
+void Printer::renderPng(CanExceptionCallback cb) {
+    auto f = [cb, this](bool success, const QString& message) mutable {
         if (success) {
 
             QImageWriter writer(data_pack->page.page_file_path + ".png", "png");
-            writer.setQuality(100);
+            // writer.setQuality(100);
             if (writer.canWrite()) {
                 writer.write(*image);
-                p.set_value();
+                cb.correct();
             } else {
                 data_pack->page.error_message = "can't write png file";
-                p.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
+                cb.exception(PrintWorkFlowError());
             }
         } else {
             data_pack->page.error_message = message;
-            p.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
+            cb.exception(PrintWorkFlowError());
         }
     };
 
@@ -51,7 +50,7 @@ void Printer::renderPng(std::promise<void>&& p) {
         f(true, "");
     }
 }
-void Printer::toPrinterResult(bool success, const QString& message, std::promise<void>&& p) {
+void Printer::toPrinterResult(bool success, const QString& message, CanExceptionCallback cb) {
 
     if (success) {
         auto avalible_printer_infos = Printer::getAvaliblePrinterInfo();
@@ -63,7 +62,7 @@ void Printer::toPrinterResult(bool success, const QString& message, std::promise
                 return false;
             });
         if (printer_info == avalible_printer_infos.cend()) {
-            toPrinterResult(false, "can't find avalible printer in system printers", std::move(p));
+            toPrinterResult(false, "can't find avalible printer in system printers", cb);
         } else {
             auto c_printer_iter =
                 std::find_if(printers.cbegin(), printers.cend(), [printer_info](const auto& e) {
@@ -82,9 +81,9 @@ void Printer::toPrinterResult(bool success, const QString& message, std::promise
 
             if (data_pack->config.is_use_printer_default_config == 1) {
                 if (printImage(c_printer)) {
-                    p.set_value();
+                    cb.correct();
                 } else {
-                    toPrinterResult(false, "Painter to printer error!", std::move(p));
+                    toPrinterResult(false, "Painter to printer error!", cb);
                 }
 
             } else {
@@ -99,7 +98,7 @@ void Printer::toPrinterResult(bool success, const QString& message, std::promise
                                  });
 
                 if (paper_info == supportd_page_sizes.cend()) {
-                    toPrinterResult(false, "can't find avalible paper in printer", std::move(p));
+                    toPrinterResult(false, "can't find avalible paper in printer", cb);
                 } else {
                     QPageLayout layout;
                     layout.setPageSize(*paper_info);
@@ -111,16 +110,16 @@ void Printer::toPrinterResult(bool success, const QString& message, std::promise
                     c_printer->setPageLayout(layout);
                     c_printer->setResolution(600);
                     if (printImage(c_printer)) {
-                        p.set_value();
+                        cb.correct();
                     } else {
-                        toPrinterResult(false, "Painter to printer error!", std::move(p));
+                        toPrinterResult(false, "Painter to printer error!", cb);
                     }
                 }
             }
         }
     } else {
         data_pack->page.error_message = message;
-        p.set_exception(std::make_exception_ptr(PrintWorkFlowError()));
+        cb.exception(PrintWorkFlowError());
     }
 }
 bool Printer::printImage(QPrinter* printer) {
@@ -135,10 +134,10 @@ bool Printer::printImage(QPrinter* printer) {
     painter.end();
     return true;
 }
-void Printer::toPrinter(std::promise<void>&& p) {
+void Printer::toPrinter(CanExceptionCallback cb) {
 
-    auto f = [&p, this](bool success, const QString& message) {
-        toPrinterResult(success, message, std::move(p));
+    auto f = [cb, this](bool success, const QString& message) mutable {
+        toPrinterResult(success, message, cb);
     };
 
     if (image == nullptr) {
@@ -151,7 +150,7 @@ void Printer::toPrinter(std::promise<void>&& p) {
 
 void Printer::slotPdfdocumentStatusChanged(QPdfDocument::Status status) {
     if (status == QPdfDocument::Status::Ready) {
-        image = new QImage(pdf_doc.render(
+        image = std::make_unique<QImage>(pdf_doc.render(
             0, QSize(data_pack->config.width_mm * 10, data_pack->config.height_mm * 10)));
         pdf_doc.close();
         pdf_load_success_callback(true, "");

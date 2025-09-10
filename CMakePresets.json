@@ -7,6 +7,7 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_PREFIX_PATH": {
           "type": "PATH",
           "value": "$env{QT6_INCLUDE_PATH}/lib/cmake/"
@@ -20,13 +21,7 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "ONLY_EXE": "ON",
-        "CMAKE_PREFIX_PATH": {
-          "type": "PATH",
-          "value": "$env{QT6_INCLUDE_PATH}/lib/cmake/"
-        },
-        "CMAKE_CXX_FLAGS": "-I$env{QT6_INCLUDE_PATH}/include",
-        "CMAKE_TOOLCHAIN_FILE": "$env{QT6_INCLUDE_PATH}/lib/cmake/Qt6/qt.toolchain.cmake"
+        "ONLY_EXE": "ON"
       }
     },
     {
@@ -37,7 +32,7 @@
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "CMAKE_TOOLCHAIN_FILE": "/home/zerlei/Qt/6.9.1/gcc_64/lib/cmake/Qt6/qt.toolchain.cmake",
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     }
   ]

@@ -9,6 +9,7 @@
 #include "WebsocketClient.h"
 #include "WebsocketServer.h"
 #include <cstddef>
+#include <functional>
 #include <memory>
 #include <string_view>
 constexpr size_t hash(std::string_view input) noexcept {
@@ -30,7 +31,7 @@ class MsgStation {
     std::unique_ptr<WebsocketServer> websocket_server{nullptr};
     std::unique_ptr<WebsocketClient> websocket_client{nullptr};
     std::function<void(const QString& msg, const QString& ip, const QString& from,
-                       std::promise<QJsonObject>)>
-                                                                               message_handler;
+                       std::move_only_function<void(QJsonObject)>)>
+                                                                              message_handler;
     PrinterWorkFlow<GetConfig<PageRender<RenderPng<ToPrinter<LastProcess>>>>> printer_work_flow;
 };

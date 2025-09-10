@@ -1,10 +1,11 @@
 #include "WebsocketClient.h"
 #include <QtCore/QDebug>
+#include <functional>
 
-WebsocketClient::WebsocketClient(
-    const QUrl& url,
-    std::function<void(const QString&, const QString&, const QString&, std::promise<QJsonObject>)>
-        message_handler)
+WebsocketClient::WebsocketClient(const QUrl& url,
+                                 std::function<void(const QString&, const QString&, const QString&,
+                                                    std::move_only_function<void(QJsonObject)>)>
+                                     message_handler)
     : message_handler(message_handler) {
     connect(&websocket, &QWebSocket::connected, this, &WebsocketClient::onConnected);
     connect(&websocket, &QWebSocket::disconnected, this, &WebsocketClient::closed);
@@ -16,10 +17,9 @@ void WebsocketClient::onConnected() {
 }
 void WebsocketClient::onTextMessageReceived(QString message) {
 
-    std::promise<QJsonObject> p;
-    auto                      f = p.get_future();
-    this->message_handler(message, websocket.peerAddress().toString(), "websocket_client",
-                          std::move(p));
-    auto v = QJsonDocument(f.get()).toJson();
-    websocket.sendTextMessage(v);
+    auto f = [this](QJsonObject obj) {
+        auto v = QJsonDocument(obj).toJson();
+        this->websocket.sendTextMessage(v);
+    };
+    this->message_handler(message, websocket.peerAddress().toString(), "websocket_client", f);
 }

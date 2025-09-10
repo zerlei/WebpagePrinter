@@ -1,7 +1,7 @@
 #include "SqliteDb.h"
 #include "../InitConfig.h"
-#include "../exception/FatalError.h"
-#include "../exception/SqliteOpError.h"
+#include "../excep/FatalError.h"
+#include "../excep/SqliteOpError.h"
 #include "../log/log.h"
 #include "../model/ModelsSql.h"
 #include <QFile>
@@ -14,6 +14,7 @@
 #include <qcontainerfwd.h>
 #include <qdebug.h>
 #include <qlogging.h>
+#include <tuple>
 #define LogAddThrow(arg)                                                                           \
     qCritical(APPLOG) << (arg);                                                                    \
     throw SqliteOpError((arg))
@@ -333,7 +334,7 @@ void SqliteDb::updatePage(const PrintedPage& page) const {
         LogAddThrow(QString("Update Page Error: ") + query->lastError().text());
     }
 }
-std::deque<PrintedPage> SqliteDb::getPagesDesc(int page_index, int page_size) const {
+std::tuple<std::deque<PrintedPage>, int> SqliteDb::getPagesDesc(int page_index, int page_size) const {
 
     std::deque<PrintedPage> pages;
     if (query->exec(QString("SELECT * FROM printed_page order by id desc limit %1 offset %2")
@@ -356,5 +357,14 @@ std::deque<PrintedPage> SqliteDb::getPagesDesc(int page_index, int page_size) co
     } else {
         LogAddThrow(QString("Select Page Error: ") + query->lastError().text());
     }
-    return pages;
+
+    int count{0};
+    if (query->exec("SELECT count(1) from printed_page")) {
+        while (query->next()) {
+            count = query->value(0).toInt();
+        }
+    } else {
+        LogAddThrow(QString("Select Page Count Error: ") + query->lastError().text());
+    }
+    return std::make_tuple(pages, count);
 }

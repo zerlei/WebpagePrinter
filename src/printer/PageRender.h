@@ -1,11 +1,11 @@
 #pragma once
 #include "../db/SqliteDb.h"
-#include "../exception/PrintWorkFlowError.h"
-#include "../exception/SqliteOpError.h"
+#include "../excep/CanExceptionCallback.h"
+#include "../excep/PrintWorkFlowError.h"
+#include "../excep/SqliteOpError.h"
 #include "../model/WebInterface.h"
 #include "DataPack.h"
 #include "WebRender.h"
-#include <future>
 template <typename T>
 class PageRender {
     T         next;
@@ -15,20 +15,20 @@ class PageRender {
 
   public:
     void work(PrinterDataPack& data_pack) {
-        try {
-
-            std::promise<void> p;
-            auto               f = p.get_future();
-            render.work(&data_pack, std::move(p));
-            f.wait();
-            data_pack.page.status = step_str[step];
-            SqliteDb::instance().updatePage(data_pack.page);
-            next.work(data_pack);
-        } catch (const PrintWorkFlowError&) {
-            data_pack.setPromiseValue(
-                RespError::toJsonObject(data_pack.uid, data_pack.page.error_message));
-        } catch (const SqliteOpError& e) {
-            data_pack.setPromiseValue(RespError::toJsonObject(data_pack.uid, e.what()));
-        }
+        CanExceptionCallback callback(
+            [this, &data_pack]() {
+                try {
+                    data_pack.page.status = step_str[step];
+                    SqliteDb::instance().updatePage(data_pack.page);
+                    next.work(data_pack);
+                } catch (const SqliteOpError& e) {
+                    data_pack.setRespValue(RespError::toJsonObject(data_pack.uid, e.what()));
+                }
+            },
+            [this, &data_pack](const PrintWorkFlowError&) {
+                data_pack.setRespValue(
+                    RespError::toJsonObject(data_pack.uid, data_pack.page.error_message));
+            });
+        render.work(&data_pack, callback);
     }
 };

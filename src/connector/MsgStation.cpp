@@ -1,11 +1,12 @@
 #include "MsgStation.h"
 #include "../InitConfig.h"
 #include "../db/SqliteDb.h"
-#include "../exception/JsonParseError.h"
+#include "../excep/JsonParseError.h"
 #include "../model/ModelsJson.h"
 #include "../model/WebInterface.h"
 #include "../printer/Printer.h"
 #include "HttpServer.h"
+#include <functional>
 #include <memory>
 #include <qjsonobject.h>
 MsgStation::MsgStation() {
@@ -22,7 +23,7 @@ MsgStation::MsgStation() {
 void MsgStation::initMsgHandler() {
 
     message_handler = [this](const QString& msg, const QString& ip, const QString& from,
-                             std::promise<QJsonObject> p) {
+                             std::move_only_function<void(QJsonObject)> resp) {
         // uid websocket 的消息request 和 resp 不限制对应关系,uid 保证了他们的联系,这个由Request
         // 保证 也就是 uid 相同 的 request 和 response 对应
         std::optional<int> uid;
@@ -45,7 +46,7 @@ void MsgStation::initMsgHandler() {
                         if (obj["data"].isObject()) {
                             auto config = fromPrinterConfigJson(msg, obj["data"].toObject());
                             SqliteDb::instance().addConfig(config);
-                            p.set_value(RespAddConfig::toJsonObject(uid, config.id));
+                            resp(RespAddConfig::toJsonObject(uid, config.id));
                         } else {
                             throw JsonParseError(msg, "Parse error: data is not a json object");
                         }
@@ -55,7 +56,7 @@ void MsgStation::initMsgHandler() {
                         if (obj["data"].isObject()) {
                             auto config = fromPrinterConfigJson(msg, obj["data"].toObject());
                             SqliteDb::instance().updateConfig(config);
-                            p.set_value(RespUpdateConfig::toJsonObject(uid));
+                            resp(RespUpdateConfig::toJsonObject(uid));
                         } else {
                             throw JsonParseError(msg, "Parse error: data is not a json object");
                         }
@@ -65,24 +66,24 @@ void MsgStation::initMsgHandler() {
                         if (obj["data"].isDouble()) {
                             auto config_id = obj["data"].toInt();
                             SqliteDb::instance().delConfig(config_id);
-                            p.set_value(RespDelConfig::toJsonObject(uid));
+                            resp(RespDelConfig::toJsonObject(uid));
                         } else {
                             throw JsonParseError(msg, "Parse error: data is not a json object");
                         }
                         break;
                     }
                     case hash(RequestGetAllConfigs::method): {
-                        p.set_value(RespGetAllConfigs::toJsonObject(
-                            uid, SqliteDb::instance().getAllConfigs()));
+                        resp(RespGetAllConfigs::toJsonObject(uid,
+                                                             SqliteDb::instance().getAllConfigs()));
                         break;
                     }
                     case hash(RequestGetPagesDesc::method): {
                         if (obj["page_index"].isDouble() && obj["page_size"].isDouble()) {
                             auto                    page_index = obj["page_index"].toInt();
                             auto                    page_size  = obj["page_size"].toInt();
-                            std::deque<PrintedPage> pages =
+                           auto  [pages,count] =
                                 SqliteDb::instance().getPagesDesc(page_index, page_size);
-                            p.set_value(RespGetPagesDesc::toJsonObject(uid, pages));
+                            resp(RespGetPagesDesc::toJsonObject(uid, pages,count));
 
                         } else {
                             throw JsonParseError(msg, "Parse error: data is not a json object");
@@ -94,21 +95,21 @@ void MsgStation::initMsgHandler() {
                         if (obj["data"].isObject()) {
                             auto page      = obj["data"].toObject();
                             obj["from_ip"] = from + "--" + ip;
-                            printer_work_flow.addWorkQueue(page, std::move(p));
+                            printer_work_flow.addWorkQueue(page, std::move(resp), uid);
                         } else {
                             throw JsonParseError(msg, "Parse error: data is not a json object");
                         }
                         break;
                     }
                     case hash(RequestGetPrintersInfo::method): {
-                        p.set_value(RespGetPrintersInfo::toJsonObject(
-                            uid, Printer::getAvaliblePrinterInfo()));
+                        resp(RespGetPrintersInfo::toJsonObject(uid,
+                                                               Printer::getAvaliblePrinterInfo()));
                         break;
                     }
 
                     case hash(RequestGetWebsocketServerPort::method): {
                         auto [_, port] = InitConfig::instance().getLocalWebsocketServerIpPort();
-                        p.set_value(RespGetWebsocketServerPort::toJsonObject(uid, port));
+                        resp(RespGetWebsocketServerPort::toJsonObject(uid, port));
                         break;
                     }
 
@@ -124,9 +125,9 @@ void MsgStation::initMsgHandler() {
                 throw JsonParseError(msg, "Parse error: is not an Json object");
             }
         } catch (const JsonParseError& ex) {
-            p.set_value(RespError::toJsonObject(uid, ex.what()));
+            resp(RespError::toJsonObject(uid, ex.what()));
         } catch (...) {
-            p.set_value(RespError::toJsonObject(uid, "unknown error"));
+            resp(RespError::toJsonObject(uid, "unknown error"));
         }
     };
 }

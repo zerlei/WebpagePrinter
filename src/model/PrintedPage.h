@@ -1,7 +1,7 @@
 #pragma once
-#include "../exception/FatalError.h"
+// #include "../excep/FatalError.h"
 #include <QString>
-#include <qloggingcategory.h>
+// #include <qloggingcategory.h>
 struct PrintedPage {
     // PrintedPage(const PrintedPage&&) {
     //     assert(false && "PrintedPage should not be moved");

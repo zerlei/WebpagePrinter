@@ -1,11 +1,10 @@
 #include "../db/SqliteDb.h"
-#include "../exception/SqliteOpError.h"
+#include "../excep/SqliteOpError.h"
 #include "../model/WebInterface.h"
 #include "DataPack.h"
 template <typename T>
 class GetConfig {
     static constexpr STEP step = GET_CONFIG;
-
     T next;
 
   public:
@@ -22,7 +21,7 @@ class GetConfig {
             SqliteDb::instance().updatePage(data_pack.page);
             next.work(data_pack);
         } catch (const SqliteOpError& e) {
-            data_pack.setPromiseValue(RespError::toJsonObject(data_pack.uid, e.what()));
+            data_pack.setRespValue(RespError::toJsonObject(data_pack.uid, e.what()));
         }
     }
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include <QtCore/QObject>
 #include <QtWebSockets/QWebSocket>
-#include <future>
+#include <functional>
 #include <qjsonobject.h>
 
 class WebsocketClient : public QObject {
@@ -9,7 +9,7 @@ class WebsocketClient : public QObject {
       public:
         explicit WebsocketClient(const QUrl& url,
                                  std::function<void(const QString&, const QString&, const QString&,
-                                                    std::promise<QJsonObject>)>
+                                                    std::move_only_function<void(QJsonObject)>)>
                                      message_handler);
 
       Q_SIGNALS:
@@ -21,7 +21,7 @@ class WebsocketClient : public QObject {
 
       private:
         std::function<void(const QString&, const QString&, const QString&,
-                           std::promise<QJsonObject>)>
+                           std::move_only_function<void(QJsonObject)>)>
                    message_handler;
         QWebSocket websocket;
 };

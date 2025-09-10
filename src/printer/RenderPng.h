@@ -1,26 +1,34 @@
 #pragma once
-#include "../exception/PrintWorkFlowError.h"
+#include "../excep/CanExceptionCallback.h"
+#include "../excep/PrintWorkFlowError.h"
 #include "../model/WebInterface.h"
 #include "DataPack.h"
-#include "Printer.h"
-#include <future>
 template <typename T>
 class RenderPng {
-    T       next;
+    static constexpr STEP step = STEP::RENDER_PNG;
+    T                     next;
+
   public:
     void work(PrinterDataPack& data_pack) {
-        try {
-            if (data_pack.config.is_save_png == 1) {
-                next.printer.setDataPack(&data_pack);
-                std::promise<void> promise;
-                auto               future = promise.get_future();
-               next.printer.renderPng(std::move(promise));
-                future.get();
-            }
+        if (data_pack.config.is_save_png == 1) {
+            CanExceptionCallback callback(
+                [this, &data_pack]() {
+                    try {
+                        data_pack.page.status = step_str[step];
+                        SqliteDb::instance().updatePage(data_pack.page);
+                        next.work(data_pack);
+                    } catch (const SqliteOpError& e) {
+                        data_pack.setRespValue(RespError::toJsonObject(data_pack.uid, e.what()));
+                    }
+                },
+                [this, &data_pack](const PrintWorkFlowError&) {
+                    data_pack.setRespValue(
+                        RespError::toJsonObject(data_pack.uid, data_pack.page.error_message));
+                });
+            next.printer.setDataPack(&data_pack);
+            next.printer.renderPng(callback);
+        } else {
             next.work(data_pack);
-        } catch (const PrintWorkFlowError&) {
-            data_pack.setPromiseValue(
-                RespError::toJsonObject(data_pack.uid, data_pack.page.error_message));
         }
     }
 };
