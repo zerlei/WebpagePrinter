@@ -15,12 +15,17 @@ class LastProcess {
         } else {
 
             QProcess process;
-
+            process.setEnvironment(QProcess::systemEnvironment());
             auto process_argumnet = data_pack.config.process_argument_at_end.replace(
                 "%PAGE_FILE_PATH%", data_pack.page.page_file_path);
 
             process.start(data_pack.config.process_at_end, process_argumnet.split(" "));
-            process.waitForFinished();
+            bool l = process.waitForFinished();
+            if (!l) {
+                qDebug() << process.error();
+                qDebug() << process.errorString();
+                qDebug() << "in nix bundle, host program not work!";
+            }
             data_pack.page.end_cmd_exec_message = process.readAllStandardOutput();
             data_pack.page.end_cmd_exec_status  = process.exitCode();
             if (process.exitStatus() != QProcess::NormalExit) {
