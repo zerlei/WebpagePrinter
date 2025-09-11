@@ -48,6 +48,15 @@
         "CMAKE_TOOLCHAIN_FILE": "/home/zerlei/Qt/6.9.1/gcc_64/lib/cmake/Qt6/qt.toolchain.cmake",
         "CMAKE_BUILD_TYPE": "Debug"
       }
+    },
+    {
+      "name": "win-rel",
+      "description": "github action",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "EXE": "ON",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ]
 }
