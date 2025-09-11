@@ -1,8 +1,8 @@
 name: Deploy
 on:
   push:
-    branches:
-      - v2 # 只有推送 tag 时才触发，适合发布版本
+    tags:
+      - 'v*'   # 只有推送 tag 时才触发，适合发布版本
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -44,9 +44,25 @@ jobs:
               cmake --preset docs
               cmake --build build --target docs
           "
-      - name: Deploy
+      - name: Deploy docs
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build/docs/html --project-name=webpageprint
+
+      - name: deploy package
+        run: |
+          nix bundle
+          mkdir -p dist/wwwroot
+          mv "$(realpath WebpagePrinterTool-arx)" dist/WebpagePrinterTool
+          wget https://github.com/zerlei/WebpagePrinterHelper/releases/download/v1.0.0/dist.zip -O /tmp/wwwroot.zip
+          unzip /tmp/wwwroot.zip -d dist/wwwroot
+          zip -r ./WebpagePrinterTool-linux-x64.zip ./dist/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: WebpagePrinterTool-linux-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
