@@ -55,7 +55,8 @@
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "EXE": "ON",
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "QT_DEBUG_FIND_PACKAGE":"ON"
       }
     }
   ]

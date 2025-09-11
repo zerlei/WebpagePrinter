@@ -22,10 +22,10 @@ jobs:
           target: 'desktop'
           arch: 'win64_msvc2022_64'
           cache: "true"
-          modules: 'qthttpserver qtwebengine qtpdf qtwebsockets'
+          modules: 'qthttpserver qtwebengine qtpdf qtwebsockets qtpositioning'
       - name: build with cmake
         run: |
-          cmake --preset win-rel
+          cmake --preset win-rel -debug-find-pkg=Qt6WebEngineCore
           cmake --build build
       - name: deploy qt-runtime
         run: |
