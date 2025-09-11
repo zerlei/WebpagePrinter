@@ -29,8 +29,7 @@ jobs:
           cmake --build build
       - name: deploy qt-runtime
         run: |
-          set "QT_BIN_PATH=%Qt5_DIR%\bin"
-          "%QT_BIN_PATH%\windeployqt.exe" --release build\src\WebpagePrinterTool.exe
+          powershell windeployqt.exe --release build\src\WebpagePrinterTool.exe
         shell: cmd
 
       - name: download helper
