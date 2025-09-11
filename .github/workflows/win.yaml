@@ -38,7 +38,7 @@ jobs:
         run: |
          powershell Invoke-WebRequest -Uri https://github.com/zerlei/WebpagePrinterHelper/releases/download/v1.0.0/dist.zip -OutFile ./dist.zip
          powershell Expand-Archive -Path ./dist.zip -DestinationPath ./build/src/Release
-         powershell Remove-Item -Path ./build/src/Release/dist -NewName "wwwroot"
+         powershell Rename-Item -Path ./build/src/Release/dist -NewName "wwwroot"
 
       - name: Package artifact
         run: |
