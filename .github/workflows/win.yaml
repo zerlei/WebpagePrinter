@@ -1,0 +1,52 @@
+name: windows-build
+on:
+  push:
+    tags:
+      - 'v*'   # 只有推送 tag 时才触发，适合发
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install qt 
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.9.1'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          cache: "true"
+          modules: 'qthttpserver qtwebengine qtpdf qtwebsockets'
+      - name: build with cmake
+        run: |
+          cmake --preset win-rel
+          cmake --build build
+      - name: deploy qt-runtime
+        run: |
+          set "QT_BIN_PATH=%Qt5_DIR%\bin"
+          "%QT_BIN_PATH%\windeployqt.exe" --release build\src\WebpagePrinterTool.exe
+        shell: cmd
+
+      - name: download helper
+        run: |
+         powershell Invoke-WebRequest -Uri https://github.com/zerlei/WebpagePrinterHelper/releases/download/v1.0.0/dist.zip -OutFile ./dist.zip
+         powershell Expand-Archive -Path ./dist.zip -DestinationPath ./build/src
+         powershell Remove-Item -Path ./build/src/dist -NewName "wwwroot"
+
+      - name: Package artifact
+        run: |
+          powershell Compress-Archive -Path build\src\* -DestinationPath ./WebpagePrinterTool-win-x64.zip
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: WebpagePrinterTool-win-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
