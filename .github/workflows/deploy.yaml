@@ -16,7 +16,7 @@ jobs:
         with:
           bun-version: latest
 
-      - uses: nixbuild/nix-quick-install-action@v34
+      - uses: nixbuild/nix-quick-install-action@v33
         with:
           nix_conf: |
             keep-env-derivations = true
