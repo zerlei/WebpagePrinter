@@ -25,7 +25,7 @@ jobs:
           modules: 'qthttpserver qtwebengine qtpdf qtwebsockets qtpositioning'
       - name: build with cmake
         run: |
-          cmake --preset win-rel -debug-find-pkg=Qt6WebEngineCore
+          cmake --preset win-rel --debug-find-pkg=Qt6WebEngineCore
           cmake --build build
       - name: deploy qt-runtime
         run: |
