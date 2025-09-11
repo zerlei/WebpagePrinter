@@ -1,0 +1,53 @@
+name: windows-build
+on:
+  push:
+    tags:
+      - 'v*'   # 只有推送 tag 时才触发，适合发
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install qt 
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.9.1'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          cache: "true"
+          modules: 'qthttpserver qtwebengine qtpdf qtwebsockets qtpositioning qtwebchannel'
+      #  MSVC / Visual Studio 的生成器是多配置生成器：
+      # 它一次性生成 Debug / Release / 其他配置。
+      # 你在 cmake 配置阶段设置 CMAKE_BUILD_TYPE 是没用的，CMake 会提示“未使用该变量”。
+      - name: build with cmake
+        run: |
+          cmake --preset win-rel --debug-find-pkg=Qt6WebEngineCore
+          cmake --build build --config Release
+      - name: deploy qt-runtime
+        run: |
+          powershell windeployqt.exe --release build\src\Release\WebpagePrinterTool.exe
+
+      - name: download helper
+        run: |
+         powershell Invoke-WebRequest -Uri https://github.com/zerlei/WebpagePrinterHelper/releases/download/v1.0.0/dist.zip -OutFile ./dist.zip
+         powershell Expand-Archive -Path ./dist.zip -DestinationPath ./build/src/Release
+         powershell Rename-Item -Path ./build/src/Release/dist -NewName "wwwroot"
+
+      - name: Package artifact
+        run: |
+          powershell Compress-Archive -Path build\src\Release\* -DestinationPath ./WebpagePrinterTool-win-x64.zip
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: WebpagePrinterTool-win-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
