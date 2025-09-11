@@ -44,16 +44,13 @@ jobs:
               cmake --preset docs
               cmake --build build --target docs
           "
-      - name: swith to main branch
-        run: git checkout main
-
-
       - name: Deploy docs
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy build/docs/html --project-name=webpageprint
+          environment: production
+          command: pages deploy build/docs/html --project-name=webpageprint --branch=main
 
       - name: deploy package
         run: |
