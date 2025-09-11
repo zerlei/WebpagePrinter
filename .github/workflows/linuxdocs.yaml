@@ -44,6 +44,10 @@ jobs:
               cmake --preset docs
               cmake --build build --target docs
           "
+      - name: swith to main branch
+        run: git checkout main
+
+
       - name: Deploy docs
         uses: cloudflare/wrangler-action@v3
         with:
