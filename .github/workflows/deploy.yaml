@@ -40,9 +40,10 @@ jobs:
           purge-primary-key: never
       - name: build docs
         run: |
-          nix develop
-          cmake --preset docs
-          cmake --build build --target docs
+          nix develop --command bash -c "
+              cmake --preset docs
+              cmake --build build --target docs
+          "
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
