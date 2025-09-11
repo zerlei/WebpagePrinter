@@ -7,17 +7,17 @@ set(CMAKE_CXX_STANDARD 23)
 if(NOT DEFINED EXE)
   set(EXE
       OFF
-      CACHE BOOL)
+      CACHE BOOL "")
 endif()
 if(NOT DEFINED DOCS)
   set(DOCS
       OFF
-      CACHE BOOL)
+      CACHE BOOL "")
 endif()
 if(NOT DEFINED TESTS)
   set(TESTS
       OFF
-      CACHE BOOL)
+      CACHE BOOL "")
 endif()
 if(EXE)
   add_subdirectory(src)
