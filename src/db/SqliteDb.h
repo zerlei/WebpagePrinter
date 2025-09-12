@@ -6,7 +6,6 @@
 #include <deque>
 #include <memory>
 #include <tuple>
-
 class SqliteDb {
   public:
     ~SqliteDb() = default;

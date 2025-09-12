@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(
   WebpagePrinterTool
-  VERSION 0.1
+  VERSION 2.0
   LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 if(NOT DEFINED EXE)
