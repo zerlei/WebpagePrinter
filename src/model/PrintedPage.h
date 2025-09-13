@@ -20,7 +20,7 @@ struct PrintedPage {
     int config_id;
 
     /**
-     * @brief PAGE_LOADED  or JS_REQUEST
+     * @brief PAGE_LOADED(页面加载完毕)  or JS_REQUEST(window.print()被调用)
      *
      */
     QString page_loaded_or_js_request;
@@ -30,7 +30,7 @@ struct PrintedPage {
      */
     QString time;
     /**
-     * @brief 状态 ERROR OR STEP
+     * @brief 状态 STEP
      *
      */
     QString status;
@@ -45,7 +45,7 @@ struct PrintedPage {
      */
     QString page_file_path;
     /**
-     * @brief 打印的网页
+     * @brief 打印的网页, 如果是磁盘上的文件,请添加 `file://`前缀
      *
      */
     QString page_url;

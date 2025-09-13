@@ -47,7 +47,10 @@ graph LR
 > ```
 >
 > 当请求打印服务的 ip 是 localhost,因为浏览器的安全策略,http 请求会因跨域出错.
-> **此时建议使用 websocket 的方式**
+> **建议使用 websocket 的方式**
+
+
+
 
 ## 0-安装
 
@@ -67,12 +70,13 @@ linux 版本使用 nix 做成了一个沙箱程序(glibc 都包含),可以在复
 但是有这些问题:
 
 1. 包体积实在是太大了,600 多 M
-2. qt 后台**最佳**渲染机制在不同桌面环境是不同的,还和硬件即驱动有关.所以不可能在沙箱环境中编译出完全适配所有 linux 发行版的程序.因此在运行程序时设置变量`QT_XCB_GL_INTEGRATION=none QT_QUICK_BACKEND=software`,参考代码中的 r.sh,这导致程序会变慢一些
+2. qt 后台**最佳**渲染机制在不同桌面环境是不同的,还和硬件驱动有关.所以不可能在沙箱环境中编译出完全适配所有 linux 发行版的程序.因此在运行程序时设置变量`QT_XCB_GL_INTEGRATION=none QT_QUICK_BACKEND=software`(参考代码中的 r.sh),这导致程序会变慢一些
 3. 因为是在沙箱,也就是隔离环境中运行,所以不能调用 host 的程序,所以最后一步 LastProcess 不能使用
+4. 第一次打开需要解包,很慢,所以耐心等待...
 
 ### 0.3 配置文件
 
-位于当前用户根目录`.WebpagePrinter`文件夹下.
+程序打开时会创建配置文件,位于当前用户根目录`.WebpagePrinter`文件夹下.
 
 windows:
 
@@ -87,7 +91,7 @@ cd ~/.WebpagePrinter
 
 ```
 
-第一次运行时会生成默认的配置文件:
+默认的配置:
 
 ./config.ini
 
@@ -100,7 +104,6 @@ local_websocket_server_port=8846
 remote_websocket_server_url_only_ws=
 
 ```
-
 修改后重启生效.
 
 一共有三种连接方式:
@@ -121,15 +124,17 @@ remote_websocket_server_url_only_ws=
 
 
 ![](https://cloud.zerlei.cn/f/3lfW/Screenshot_20250913_005106.png)
-如同前台工具页面描述,你需要首先定义一个config. 指定打印机 纸张大小等.然后再根据config,去发出一个print 请求.
+如同前台工具页面描述,你需要首先定义一个config. 指定打印机 纸张大小等.然后再根据config,去发出一个print请求.
 
 参考注释: 1.[config](https://wpp.zerlei.cn/structPrinterConfig) 2. [page](https://wpp.zerlei.cn/structPrintedPage)
 
+> [!IMPORTANT]  
+> [参考](https://wpp.zerlei.cn/structPrintedPage) `page_loaded_or_js_request` 字段. 如果选择使用`JS_REQUEST`,建议在js中使用原始的 `window.print()`.不同的js 打印库,实现方式不同,没有办法一一保证.
 
 
-无论使用任何一种连接方式,数据格式都是`json`,不同连接方式,相同意义请求,传递的内容一致.
+无论使用任何一种连接方式,数据格式都是`json`,不同连接方式,相同请求,传递的内容一致.
 
-- http 统一使用 POST 请求,url `/command` **所有内容放在 body 中**
+- http 全部使用 POST 请求,url `/command` **所有内容放在 body 中**
 
 example: 
 
@@ -206,7 +211,8 @@ struct RespError : RespBase {
 ### 1.1 获得工具安装电脑上的打印机和纸张信息
 
 此机器上,可以获取的打印机驱动.
-建议在[config](https://wpp.zerlei.cn/structPrinterConfig)中,设置is_use_printer_default_config = 1; 使用打印机默认配置
+
+建议在[config](https://wpp.zerlei.cn/structPrinterConfig)中,设置is_use_printer_default_config = 1; 使用打印机默认配置,也就是在系统打印机配置页面,配置打印机
 
 [参考](https://wpp.zerlei.cn/structRequestGetPrintersInfo)
 
