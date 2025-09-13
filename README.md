@@ -123,7 +123,7 @@ remote_websocket_server_url_only_ws=
 ![](https://cloud.zerlei.cn/f/3lfW/Screenshot_20250913_005106.png)
 如同前台工具页面描述,你需要首先定义一个config. 指定打印机 纸张大小等.然后再根据config,去发出一个print 请求.
 
-参考注释: 1. [config](https://wpp.zerlei.cn/structPrinterConfig) 2. [page](https://wpp.zerlei.cn/structPrintedPage)
+参考注释: 1.[config](https://wpp.zerlei.cn/structPrinterConfig) 2. [page](https://wpp.zerlei.cn/structPrintedPage)
 
 
 
@@ -153,23 +153,118 @@ fetch("/command", {
 
 - websocket 使用textmessagae
 
+### 1.0 基础数据格式
+
+[参考](https://wpp.zerlei.cn/WebInterface_8h)
+
+**基本返回:**
+
+```cpp
+struct RespBase {
+    RespBase()                    = delete;
+    /**
+     * @brief 是否成功
+     * 
+     */
+    bool               is_success = false;
+    /**
+     * @brief uid,websocket 的消息request 和 resp 不限制对应关系,uid 保证了他们的联系, 也就是 uid 相同 的 request 和 response 对应
+     * 由request端生成 -> 对应 respnse 携带
+     * 可选的,如果使用http 请求,就不需要
+     */
+    std::optional<int> uid;
+};
+
+```
+所有返回均继承此返回.
+
+
+**错误返回:**
+
+```cpp
+struct RespError : RespBase {
+    /**
+     * @brief 错误信息
+     * 
+     */
+    QString            msg{""};
+};
+
+```
+
+对应的json格式:
+
+```json
+{
+  "is_success": false,
+  "uid": 0,
+  "msg": "unknow error!"
+}
+
+```
 
 ### 1.1 获得工具安装电脑上的打印机和纸张信息
 
+此机器上,可以获取的打印机驱动.
+建议在[config](https://wpp.zerlei.cn/structPrinterConfig)中,设置is_use_printer_default_config = 1; 使用打印机默认配置
+
+[参考](https://wpp.zerlei.cn/structRequestGetPrintersInfo)
+
+例如 request json:
+
+```json
+{
+  "method":"get_printers_info",
+  "uid":0
+}
+```
+response json:
+
+```json
+{
+  "is_success": true,
+  "uid" : 0,
+  "data":[
+    {
+      "printer_name": "CUPS",
+      "supported_paper_names":[
+        "A4",
+        "A1"
+      ]
+    }
+  ]
+}
+
+```
 ### 1.2 添加一个打印配置
+
+[参考](https://wpp.zerlei.cn/structRespAddConfig)
 
 ### 1.3 获得打印配置
 
+[参考](https://wpp.zerlei.cn/structRequestGetAllConfigs)
+
 ### 1.4 删除一个打印配置
+
+[参考](https://wpp.zerlei.cn/structRequestDelConfig)
 
 ### 1.5 更改一个打印配置
 
+[参考](https://wpp.zerlei.cn/structRequestUpdateConfig)
+
 ### 1.6 发一个打印命令
+
+[参考](https://wpp.zerlei.cn/structRequestPrintPage)
 
 ### 1.7 获得打印过的页面
 
-### 1.8 获得 websocket 端口
+[参考](https://wpp.zerlei.cn/structRequestGetPagesDesc)
 
+### 1.8 获得 websocket server 端口
+
+> 此工具的前端帮助页面被后台http服务托管,所以httpserver地址等于`window.herf`,是已知的. 但主要交互方式使用websocket
+
+[参考](https://wpp.zerlei.cn/structRequestGetWebsocketServerPort)
 
 ## 2 源码和编译
 
